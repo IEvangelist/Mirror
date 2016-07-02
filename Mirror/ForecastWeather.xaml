@@ -1,0 +1,68 @@
+﻿<UserControl
+    x:Class="Mirror.ForecastWeather"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Mirror"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Loaded="OnLoaded">
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="FadeOne" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="White" Offset="0.0"/>
+            <GradientStop Color="#CCFFFFFF" Offset="1.0"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="FadeTwo" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#CCFFFFFF" Offset="0.0"/>
+            <GradientStop Color="#7FFFFFFF" Offset="1.0"/>
+        </LinearGradientBrush>
+        <Storyboard x:Name="_fadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="_forecastGrid">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Right" x:Name="_forecastGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="_oneDay" Grid.Column="0" Grid.Row="0" Text="Tue" Padding="3,0" HorizontalAlignment="Right" />
+        <TextBlock x:Name="_oneIcon" Grid.Column="1" Grid.Row="0" FontFamily="Assets/meteocons.ttf#Meteocons" Text="Y" Padding="3,0" FontSize="16" HorizontalAlignment="Center" />
+        <TextBlock x:Name="_oneLow" Grid.Column="2" Grid.Row="0" Text="L -43°" Padding="3,0" HorizontalAlignment="Left" />
+        <TextBlock x:Name="_oneHigh" Grid.Column="3" Grid.Row="0" Text="H 121°" Padding="3,0" HorizontalAlignment="Left" />
+
+        <TextBlock x:Name="_twoDay"  Grid.Column="0" Grid.Row="1" Text="Wed" Padding="3,0" HorizontalAlignment="Right" />
+        <TextBlock x:Name="_twoIcon" Grid.Column="1" Grid.Row="1" FontFamily="Assets/meteocons.ttf#Meteocons" Text="H" Padding="3,0" FontSize="16" HorizontalAlignment="Center" />
+        <TextBlock x:Name="_twoLow"  Grid.Column="2" Grid.Row="1" Text="L 69°" Padding="3,0" HorizontalAlignment="Left" />
+        <TextBlock x:Name="_twoHigh" Grid.Column="3" Grid.Row="1" Text="H 121°" Padding="3,0" HorizontalAlignment="Left" />
+
+        <TextBlock x:Name="_threeDay"  Grid.Column="0" Grid.Row="2" Text="Thu" Padding="3,0" HorizontalAlignment="Right" />
+        <TextBlock x:Name="_threeIcon" Grid.Column="1" Grid.Row="2" FontFamily="Assets/meteocons.ttf#Meteocons" Text="B" Padding="3,0" FontSize="16" HorizontalAlignment="Center"  />
+        <TextBlock x:Name="_threeLow"  Grid.Column="2" Grid.Row="2" Text="L -43°" Padding="3,0" HorizontalAlignment="Left" />
+        <TextBlock x:Name="_threeHigh" Grid.Column="3" Grid.Row="2" Text="H 121°" Padding="3,0" HorizontalAlignment="Left" />
+
+        <TextBlock x:Name="_fourDay"  Grid.Column="0" Grid.Row="3" Text="Fri" Padding="3,0" HorizontalAlignment="Right" Foreground="{StaticResource FadeOne}" />
+        <TextBlock x:Name="_fourIcon" Grid.Column="1" Grid.Row="3" FontFamily="Assets/meteocons.ttf#Meteocons" Text="E" Padding="3,0" FontSize="16" HorizontalAlignment="Center" Foreground="{StaticResource FadeOne}" />
+        <TextBlock x:Name="_fourLow"  Grid.Column="2" Grid.Row="3" Text="L -43°" Padding="3,0" HorizontalAlignment="Left" Foreground="{StaticResource FadeOne}" />
+        <TextBlock x:Name="_fourHigh" Grid.Column="3" Grid.Row="3" Text="H 121°" Padding="3,0" HorizontalAlignment="Left" Foreground="{StaticResource FadeOne}" />
+
+        <TextBlock x:Name="_fiveDay"  Grid.Column="0" Grid.Row="4" Text="Sat" Padding="3,0" HorizontalAlignment="Right" Foreground="{StaticResource FadeTwo}" />
+        <TextBlock x:Name="_fiveIcon" Grid.Column="1" Grid.Row="4" FontFamily="Assets/meteocons.ttf#Meteocons" Text="Y" Padding="3,0" FontSize="16" HorizontalAlignment="Center" Foreground="{StaticResource FadeTwo}" />
+        <TextBlock x:Name="_fiveLow"  Grid.Column="2" Grid.Row="4" Text="L -43°" Padding="3,0" HorizontalAlignment="Left" Foreground="{StaticResource FadeTwo}" />
+        <TextBlock x:Name="_fiveHigh" Grid.Column="3" Grid.Row="4" Text="H 121°" Padding="3,0" HorizontalAlignment="Left" Foreground="{StaticResource FadeTwo}" />
+    </Grid>
+</UserControl>
