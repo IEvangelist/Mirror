@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Mirror")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Magic Mirror Application, .NET C# UWP. Targeting Windows 10 IoT Core, running on a Raspberry Pi 3, Model B.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Mirror")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("IEvangelist, David M Pine")]
 [assembly: AssemblyCulture("")]
 
 // Version information for an assembly consists of the following four values:

@@ -21,7 +21,7 @@ namespace Mirror.Core
 
         Settings()
         {
-            var resourceLoader = ResourceLoader.GetForViewIndependentUse();
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Configuration");
             AzureEmotionApiKey = resourceLoader.GetString(nameof(AzureEmotionApiKey));
             CalendarPassword = resourceLoader.GetString(nameof(CalendarPassword));
             CalendarUsername = resourceLoader.GetString(nameof(CalendarUsername));
