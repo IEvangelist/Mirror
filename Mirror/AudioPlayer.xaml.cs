@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Mirror
 {
@@ -21,7 +9,15 @@ namespace Mirror
     {
         public AudioPlayer()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+        }
+
+        async void OnLoaded(object sender, RoutedEventArgs e) => await LoadAudioAsync();
+
+        async Task LoadAudioAsync()
+        {
+            // TODO: Actually load 
+            await Task.CompletedTask;
         }
     }
 }

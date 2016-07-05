@@ -122,7 +122,8 @@
     <Compile Include="EventCalendar.xaml.cs">
       <DependentUpon>EventCalendar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\DoubleExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\NumericExtensions.cs" />
     <Compile Include="Extensions\PageExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ForecastWeather.xaml.cs">

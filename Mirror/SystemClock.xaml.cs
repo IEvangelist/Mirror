@@ -12,10 +12,10 @@ namespace Mirror
         public SystemClock()
         {
             InitializeComponent();
-            UpdateClock();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            _content.Opacity = 0;
+            UpdateClock();
+            _fadeIn.Begin();
         }
 
         void OnLoaded(object sender, RoutedEventArgs e)

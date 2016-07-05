@@ -7,8 +7,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
-    <StackPanel>
+    d:DesignWidth="400"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Storyboard x:Name="_fadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="_content">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <StackPanel x:Name="_content">
         <StackPanel Orientation="Horizontal">
             <TextBlock x:Name="_timeLabel" Text="12:12" VerticalAlignment="Top" FontSize="90" />
             <TextBlock x:Name="_secondsLabel" Text="37" VerticalAlignment="Top" FontSize="28" Padding="6,15" Opacity="0.5" />
