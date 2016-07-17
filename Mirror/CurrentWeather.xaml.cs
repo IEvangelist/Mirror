@@ -62,7 +62,7 @@ namespace Mirror
                     {
                         _conditionLabel.Text = weather.Description.ToTitleCase();
                         _locationLabel.Text = current.Name;
-                        _weatherIcon.Text = WeatherIcons.Map[weather.Icon].ToString();
+                        _weatherIcon.Text = Weather.Icons[weather.Icon];
                     }
                 }
                 finally

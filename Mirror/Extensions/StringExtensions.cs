@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Mirror.Core;
+using System;
+using System.Text;
 
 
 namespace Mirror.Extensions
@@ -27,6 +29,16 @@ namespace Mirror.Extensions
             }
 
             return result.ToString();
+        }
+
+        internal static bool Contains(this string value, string search)
+        {
+            if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(search))
+            {
+                return false;
+            }
+
+            return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1; 
         }
     }
 }

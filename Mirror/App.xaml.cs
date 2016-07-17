@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mirror.IO;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.ViewManagement;
@@ -21,10 +22,14 @@ namespace Mirror
         public App()
         {
             InitializeComponent();
+
             Suspending += OnSuspending;
+            UnhandledException += OnUnhandledException;
 
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
         }
+
+        async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) => await Photos.CleanupAsync();
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points

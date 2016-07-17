@@ -3,7 +3,7 @@
 
 namespace Mirror.Extensions
 {
-    static class NumericExtensions
+    static class DoubleExtensions
     {
         static string[] Caridnals = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
 
@@ -14,7 +14,5 @@ namespace Mirror.Extensions
 
         internal static DateTime FromUnixTimeStamp(this double unixTimeStamp) =>
             EpochDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-
-        internal static int ToSigned(this uint value) => (int)value;
     }
 }

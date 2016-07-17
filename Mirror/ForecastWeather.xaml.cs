@@ -28,31 +28,31 @@ namespace Mirror
                     {
                         case 1:
                             _oneDay.Text = $"{value.DateTime:ddd}";
-                            _oneIcon.Text = WeatherIcons.Map[weateher.Icon].ToString();
+                            _oneIcon.Text = Weather.Icons[weateher.Icon];
                             _oneLow.Text = $"L {value.Temp.Min:#}°";
                             _oneHigh.Text = $"H {value.Temp.Max:#}°";
                             break;
                         case 2:
                             _twoDay.Text = $"{value.DateTime:ddd}";
-                            _twoIcon.Text = WeatherIcons.Map[weateher.Icon].ToString();
+                            _twoIcon.Text = Weather.Icons[weateher.Icon];
                             _twoLow.Text = $"L {value.Temp.Min:#}°";
                             _twoHigh.Text = $"H {value.Temp.Max:#}°";
                             break;
                         case 3:
                             _threeDay.Text = $"{value.DateTime:ddd}";
-                            _threeIcon.Text = WeatherIcons.Map[weateher.Icon].ToString();
+                            _threeIcon.Text = Weather.Icons[weateher.Icon];
                             _threeLow.Text = $"L {value.Temp.Min:#}°";
                             _threeHigh.Text = $"H {value.Temp.Max:#}°";
                             break;
                         case 4:
                             _fourDay.Text = $"{value.DateTime:ddd}";
-                            _fourIcon.Text = WeatherIcons.Map[weateher.Icon].ToString();
+                            _fourIcon.Text = Weather.Icons[weateher.Icon];
                             _fourLow.Text = $"L {value.Temp.Min:#}°";
                             _fourHigh.Text = $"H {value.Temp.Max:#}°";
                             break;
                         case 5:
                             _fiveDay.Text = $"{value.DateTime:ddd}";
-                            _fiveIcon.Text = WeatherIcons.Map[weateher.Icon].ToString();
+                            _fiveIcon.Text = Weather.Icons[weateher.Icon];
                             _fiveLow.Text = $"L {value.Temp.Min:#}°";
                             _fiveHigh.Text = $"H {value.Temp.Max:#}°";
                             break;

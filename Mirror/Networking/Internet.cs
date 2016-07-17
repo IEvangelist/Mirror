@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 
 
@@ -28,7 +29,7 @@ namespace Mirror.Networking
 
     static class Internet
     {
-        internal static Action<ConnectionStatus> ConnectionChanged;
+        internal static Func<ConnectionStatus, Task> ConnectionChanged;
 
         static Internet()
         {

@@ -114,21 +114,26 @@
     <Compile Include="Calendar\TimeZoneParser.cs" />
     <Compile Include="Calendar\vEvent.cs" />
     <Compile Include="Calendar\Parser.cs" />
+    <Compile Include="Extensions\TryParseExtensions.cs" />
     <Compile Include="Core\Settings.cs" />
-    <Compile Include="Core\WeatherIcons.cs" />
+    <Compile Include="Core\Weather.cs" />
     <Compile Include="CurrentWeather.xaml.cs">
       <DependentUpon>CurrentWeather.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Emotion\Emotions.cs" />
+    <Compile Include="Emotion\Result.cs" />
     <Compile Include="EventCalendar.xaml.cs">
       <DependentUpon>EventCalendar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\EmotionExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\NumericExtensions.cs" />
+    <Compile Include="Extensions\DoubleExtensions.cs" />
     <Compile Include="Extensions\PageExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ForecastWeather.xaml.cs">
       <DependentUpon>ForecastWeather.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IO\Photos.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

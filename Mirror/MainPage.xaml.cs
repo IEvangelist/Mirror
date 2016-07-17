@@ -1,11 +1,17 @@
 ﻿using Microsoft.ProjectOxford.Emotion;
 using Mirror.Core;
+using Mirror.Emotion;
 using Mirror.Extensions;
+using Mirror.IO;
 using Mirror.Networking;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media;
@@ -13,7 +19,6 @@ using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
-using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -21,6 +26,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
+using RawEmotion = Microsoft.ProjectOxford.Emotion.Contract.Emotion;
+
 
 namespace Mirror
 {
@@ -30,8 +37,9 @@ namespace Mirror
     public sealed partial class MainPage : Page
     {
         bool _isStreaming;
+        bool _isProcessing;
         FaceTracker _faceTracker;
-        ThreadPoolTimer _frameProcessingTimer;
+        DispatcherTimer _frameProcessingTimer;
         VideoEncodingProperties _videoProperties;
         SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         MediaCapture _mediaManager = new MediaCapture();
@@ -49,8 +57,42 @@ namespace Mirror
             // Enusre that our face-tracker is initialized before invoking a change of the strem-state.
             _faceTracker = await FaceTracker.CreateAsync();
 
-            await Task.WhenAll(ChangeStreamStateAsync(true),
-                               Task.CompletedTask);
+            await Task.WhenAll(ChangeStreamStateAsync(true));
+        }
+
+        async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
+        {
+            _isProcessing = true;
+
+            RawEmotion[] result;
+
+            try
+            {
+                var photoFile = await Photos.CreateAsync();
+                var imageProperties = ImageEncodingProperties.CreateBmp();
+                await _mediaManager.CapturePhotoToStorageFileAsync(imageProperties, photoFile);
+                result = await _emotionClient.RecognizeAsync(await photoFile.OpenStreamForReadAsync());
+            }
+            finally
+            {
+                _isProcessing = false;
+            }
+
+            return result.IsNullOrEmpty()
+                ? await Task.FromResult(Enumerable.Empty<RawEmotion>())
+                : result;
+        }
+
+        async Task<string> GetNamedCameraOrDefault(string cameraName = "Microsoft® LifeCam HD-3000")
+        {
+            var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            return videoDevices.Where(cam =>
+                                      cam.IsEnabled &&
+                                      cam.Name.Equals(cameraName, StringComparison.OrdinalIgnoreCase))
+                               .Select(cam => cam.Id)
+                               .FirstOrDefault()
+                   ?? videoDevices.Select(cam => cam.Id)
+                                  .SingleOrDefault();
         }
 
         async Task<bool> StartWebcamStreamingAsync()
@@ -59,9 +101,17 @@ namespace Mirror
 
             try
             {
+                if (_mediaManager != null)
+                {
+                    _mediaManager.Dispose();
+                    _mediaManager = new MediaCapture();
+                }
+
+                var cameraId = await GetNamedCameraOrDefault();
                 await _mediaManager.InitializeAsync(new MediaCaptureInitializationSettings
                 {
-                    StreamingCaptureMode = StreamingCaptureMode.Video
+                    StreamingCaptureMode = StreamingCaptureMode.Video,
+                    VideoDeviceId = cameraId
                 });
 
                 // Ensure we're only ever wired to this multicast delegate once.
@@ -77,10 +127,19 @@ namespace Mirror
                 _preview.Source = _mediaManager;
                 await _mediaManager.StartPreviewAsync();
 
-                var timerInterval = TimeSpan.FromMilliseconds(66);
-                _frameProcessingTimer =
-                    ThreadPoolTimer.CreatePeriodicTimer(new TimerElapsedHandler(ProcessCurrentVideoFrame), timerInterval);
+                if (_frameProcessingTimer != null)
+                {
+                    _frameProcessingTimer.Tick -= ProcessCurrentVideoFrame;
+                    _frameProcessingTimer.Stop();
+                    _frameProcessingTimer = null;
+                }
 
+                _frameProcessingTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromMilliseconds(10000)
+                };
+                _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
+                _frameProcessingTimer.Start();
             }
             catch (Exception ex)
             {
@@ -92,7 +151,7 @@ namespace Mirror
 
         async Task ShutdownWebcamAsync()
         {
-            _frameProcessingTimer?.Cancel();
+            _frameProcessingTimer?.Stop();
 
             if (_mediaManager.CameraStreamState == CameraStreamState.Streaming)
             {
@@ -110,7 +169,7 @@ namespace Mirror
             _preview.Source = null;
         }
 
-        async void ProcessCurrentVideoFrame(ThreadPoolTimer timer)
+        async void ProcessCurrentVideoFrame(object sender, object e)
         {
             // If a lock is being held it means we're still waiting for processing work on the previous frame to complete.
             // In this situation, don't wait on the semaphore but exit immediately.
@@ -122,8 +181,8 @@ namespace Mirror
             try
             {
                 using (var previewFrame = new VideoFrame(BitmapPixelFormat.Nv12,
-                                                         _videoProperties.Width.ToSigned(),
-                                                         _videoProperties.Height.ToSigned()))
+                                                         (int)_videoProperties.Width,
+                                                         (int)_videoProperties.Height))
                 {
                     await _mediaManager.GetPreviewFrameAsync(previewFrame);
 
@@ -135,12 +194,50 @@ namespace Mirror
                         faces = await _faceTracker.ProcessNextFrameAsync(previewFrame);
                     }
 
-                    // Create our visualization using the frame dimensions and face results but run it on the UI thread.
+                    //// Create our visualization using the frame dimensions and face results but run it on the UI thread.
                     var previewFrameSize = new Size(previewFrame.SoftwareBitmap.PixelWidth, previewFrame.SoftwareBitmap.PixelHeight);
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
                         SetupVisualization(previewFrameSize, faces);
+
+                        if (_isProcessing) return;
+
+                        var emotions = await CaptureEmotionAsync();
+                        if (emotions.IsNullOrEmpty() == false)
+                        {
+                            var mostProbable = 
+                                emotions.ToResults()
+                                        .Where(result => result != Result.Empty)
+                                        .FirstOrDefault();
+
+                            switch (mostProbable?.Emotion)
+                            {
+                                case Emotions.Anger:
+                                    break;
+                                case Emotions.Contempt:
+                                    break;
+                                case Emotions.Disgust:
+                                    break;
+                                case Emotions.Fear:
+                                    break;
+                                case Emotions.Happiness:
+                                    break;
+                                case Emotions.Neutral:
+                                    break;
+                                case Emotions.Sadness:
+                                    break;
+                                case Emotions.Surprise:
+                                    break;
+                            }
+                        }
                     });
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
                 }
             }
             finally
@@ -228,7 +325,7 @@ namespace Mirror
             Internet.Initialize();
         }
 
-        async void OnConnectionChanged(ConnectionStatus connection)
+        async Task OnConnectionChanged(ConnectionStatus connection)
         {
             await this.ThreadSafeAsync(() =>
             {
