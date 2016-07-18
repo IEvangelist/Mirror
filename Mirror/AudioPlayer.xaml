@@ -9,8 +9,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="OnLoaded">
-
-    <Grid>
-
-    </Grid>
+    <MediaElement x:Name="_mediaElement" AreTransportControlsEnabled="True" Source="Assets/Music/Crosses/02 Option.m4a">
+        <MediaElement.TransportControls>
+            <MediaTransportControls IsCompact="True" IsFullWindowButtonVisible="False" IsFullWindowEnabled="False" 
+                                    IsZoomEnabled="False" IsZoomButtonVisible="False" IsRightTapEnabled="False" RequestedTheme="Dark" />
+        </MediaElement.TransportControls>
+    </MediaElement>
 </UserControl>

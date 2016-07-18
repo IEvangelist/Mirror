@@ -3,6 +3,7 @@ using Mirror.Core;
 using Mirror.Emotion;
 using Mirror.Extensions;
 using Mirror.IO;
+using Mirror.Models;
 using Mirror.Networking;
 using System;
 using System.Collections.Generic;
@@ -60,12 +61,14 @@ namespace Mirror
             await Task.WhenAll(ChangeStreamStateAsync(true));
         }
 
+        async void OnUnloaded(object sender, RoutedEventArgs e) => await Photos.CleanupAsync();
+
         async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
         {
             _isProcessing = true;
 
             RawEmotion[] result;
-
+            
             try
             {
                 var photoFile = await Photos.CreateAsync();
@@ -75,6 +78,7 @@ namespace Mirror
             }
             finally
             {
+                await Photos.CleanupAsync();
                 _isProcessing = false;
             }
 
@@ -136,7 +140,7 @@ namespace Mirror
 
                 _frameProcessingTimer = new DispatcherTimer
                 {
-                    Interval = TimeSpan.FromMilliseconds(10000)
+                    Interval = TimeSpan.FromMilliseconds(500)
                 };
                 _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
                 _frameProcessingTimer.Start();
@@ -209,26 +213,11 @@ namespace Mirror
                                 emotions.ToResults()
                                         .Where(result => result != Result.Empty)
                                         .FirstOrDefault();
-
-                            switch (mostProbable?.Emotion)
-                            {
-                                case Emotions.Anger:
-                                    break;
-                                case Emotions.Contempt:
-                                    break;
-                                case Emotions.Disgust:
-                                    break;
-                                case Emotions.Fear:
-                                    break;
-                                case Emotions.Happiness:
-                                    break;
-                                case Emotions.Neutral:
-                                    break;
-                                case Emotions.Sadness:
-                                    break;
-                                case Emotions.Surprise:
-                                    break;
-                            }
+                            
+                            _emoticon.Text = 
+                                mostProbable != null
+                                    ? Emoticons.From(mostProbable.Emotion)
+                                    : string.Empty;
                         }
                     });
                 }
@@ -349,5 +338,7 @@ namespace Mirror
                 }
             });
         }
+
+        void OnTrackedChanged(object sender, Song song) => _songDetails.Text = song.ToString();
     }
 }

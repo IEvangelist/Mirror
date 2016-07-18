@@ -90,6 +90,21 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include=".gitignore" />
+    <Content Include="Assets\Music\Crosses\01 This is a Trick.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Music\Crosses\02 Option.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Music\Crosses\03 Bermuda Locket.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Music\Crosses\04 Thholyghst.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Music\Crosses\05 T.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\meteocons.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -97,6 +112,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <PRIResource Include="Configuration.resw" />
+    <Content Include="Assets\emoticons.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\mediacons.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +135,8 @@
     <Compile Include="Calendar\TimeZoneParser.cs" />
     <Compile Include="Calendar\vEvent.cs" />
     <Compile Include="Calendar\Parser.cs" />
+    <Compile Include="Core\Emoticons.cs" />
+    <Compile Include="Extensions\AsyncExtensions.cs" />
     <Compile Include="Extensions\TryParseExtensions.cs" />
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Weather.cs" />
@@ -133,12 +156,14 @@
     <Compile Include="ForecastWeather.xaml.cs">
       <DependentUpon>ForecastWeather.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IO\Audio.cs" />
     <Compile Include="IO\Photos.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Current.cs" />
     <Compile Include="Models\Forecast.cs" />
+    <Compile Include="Models\Song.cs" />
     <Compile Include="Networking\ApiClient.cs" />
     <Compile Include="Networking\CalendarClient.cs" />
     <Compile Include="Networking\Internet.cs" />

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Mirror.Extensions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
 
@@ -12,11 +14,10 @@ namespace Mirror.IO
         const string Extension = ".jpg";
         const string PhotoName = Photo + Extension;
 
-        internal static Task<StorageFile> CreateAsync() =>
+        internal static IAsyncOperation<StorageFile> CreateAsync() =>
             KnownFolders.PicturesLibrary
                         .CreateFileAsync(PhotoName,
-                                         CreationCollisionOption.GenerateUniqueName)
-                        .AsTask();
+                                         CreationCollisionOption.GenerateUniqueName);
 
         internal static async Task CleanupAsync()
         {
@@ -24,8 +25,9 @@ namespace Mirror.IO
 
             var deletions =
                 files.Where(file => file.DisplayName.Contains(Photo))
-                     .Select(file => file.DeleteAsync().AsTask());
-
+                     .Select(file => file.DeleteAsync())
+                     .AsTasks();
+            
             await Task.WhenAll(deletions);
         }
     }

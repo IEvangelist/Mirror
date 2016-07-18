@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="OnLoaded">
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <local:SystemClock x:Name="_systemClock" VerticalAlignment="Top" Margin="30" HorizontalAlignment="Left" />
@@ -15,7 +16,9 @@
         <TextBlock x:Name="_messageLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Greetings" FontSize="120" />
         <CaptureElement x:Name="_preview" Margin="1" FlowDirection="RightToLeft" Visibility="Collapsed" />
         <Canvas x:Name="_visualizationCanvas" Margin="1" FlowDirection="RightToLeft" />
-        <MediaElement x:Name="_mediaElement"/>
-        <Image x:Name="_connectionImage" Height="36" Margin="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="36" Source="Assets/wifi.png" />
+        <TextBlock x:Name="_songDetails" VerticalAlignment="Bottom" Margin="30,0,0,60" FontSize="22" />
+        <local:AudioPlayer TrackChanged="OnTrackedChanged" />
+        <TextBlock x:Name="_emoticon" Height="36" Width="36" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,78,60" FontFamily="Assets/emoticons.ttf#Emoticons standard" TextAlignment="Center" FontSize="32"  />
+        <Image x:Name="_connectionImage" Height="36" Margin="0,0,30,60" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="36" Source="Assets/wifi.png" />
     </Grid>
 </Page>

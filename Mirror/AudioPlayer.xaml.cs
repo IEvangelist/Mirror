@@ -1,4 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using Mirror.Extensions;
+using Mirror.IO;
+using Mirror.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using TagLib;
+using Windows.ApplicationModel;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -7,6 +16,10 @@ namespace Mirror
 {
     public sealed partial class AudioPlayer : UserControl
     {
+        public event EventHandler<Song> TrackChanged;
+
+        IEnumerable<StorageFile> _songs;
+
         public AudioPlayer()
         {
             InitializeComponent();
@@ -16,8 +29,22 @@ namespace Mirror
 
         async Task LoadAudioAsync()
         {
-            // TODO: Actually load 
-            await Task.CompletedTask;
+            if (DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
+            _songs = _songs ?? await Audio.LocalAudioFilesAsync();
+
+            var song = _songs.RandomElement();
+            var stream = await song.OpenStreamForReadAsync();
+
+            var file = TagLib.File.Create(new StreamFileAbstraction(song.Name, stream, null));
+            var tags = file.Tag;
+
+            TrackChanged?.Invoke(this, new Song(tags.FirstAlbumArtist, tags.Title));
+
+            _mediaElement.SetSource(await song.OpenReadAsync(), song.ContentType);
         }
     }
 }
