@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
@@ -54,6 +55,8 @@ namespace Mirror
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
             InitializeInternet();
+
+            _messageLabel.Text = "Hello";
 
             // Enusre that our face-tracker is initialized before invoking a change of the strem-state.
             _faceTracker = await FaceTracker.CreateAsync();
@@ -145,7 +148,7 @@ namespace Mirror
                 _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
                 _frameProcessingTimer.Start();
             }
-            catch (Exception ex)
+            catch
             {
                 successful = false;
             }
@@ -163,7 +166,7 @@ namespace Mirror
                 {
                     await _mediaManager.StopPreviewAsync();
                 }
-                catch (Exception)
+                catch
                 {
                     // Since we're going to destroy the MediaCapture object there's nothing to do here
                 }
@@ -213,7 +216,11 @@ namespace Mirror
                                 emotions.ToResults()
                                         .Where(result => result != Result.Empty)
                                         .FirstOrDefault();
-                            
+
+                            _messageLabel.Text =
+                                mostProbable != null
+                                    ? EmotionMessages.Messages[mostProbable.Emotion].RandomElement()
+                                    : string.Empty;
                             _emoticon.Text = 
                                 mostProbable != null
                                     ? Emoticons.From(mostProbable.Emotion)
@@ -222,7 +229,7 @@ namespace Mirror
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (Debugger.IsAttached)
                 {

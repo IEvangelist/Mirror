@@ -2,12 +2,15 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Mirror.Networking;
-
+using System;
+using System.Threading.Tasks;
 
 namespace Mirror
 {
     public sealed partial class ForecastWeather : UserControl
     {
+        DispatcherTimer _timer = new DispatcherTimer();
+
         public ForecastWeather()
         {
             InitializeComponent();
@@ -15,52 +18,63 @@ namespace Mirror
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            await LoadForecastAsync();
+
+            _timer.Stop();
+            _timer.Interval = TimeSpan.FromHours(1);
+            _timer.Tick -= OnTimerTick;
+            _timer.Tick += OnTimerTick;
+            _timer.Start();
+        }
+
+        async void OnTimerTick(object sender, object e) => await LoadForecastAsync();
+
+        async Task LoadForecastAsync()
+        {
             _forecastGrid.Opacity = 0;
 
             var forecast = await WeatherClient.GetForecastAsync();
             if (forecast != null && forecast.Cnt == 6)
             {
-                for (int index = 0; index < forecast.List.Count; ++ index)
+                for (int index = 0; index < forecast.List.Count; ++index)
                 {
                     var value = forecast.List[index];
-                    var weateher = value.Weather[0];
+                    var weather = value.Weather[0];
                     switch (index)
                     {
                         case 1:
-                            _oneDay.Text = $"{value.DateTime:ddd}";
-                            _oneIcon.Text = Weather.Icons[weateher.Icon];
-                            _oneLow.Text = $"L {value.Temp.Min:#}°";
-                            _oneHigh.Text = $"H {value.Temp.Max:#}°";
+                            UpdateControls(_oneDay, _oneIcon, _oneLow, _oneHigh, value, weather);
                             break;
                         case 2:
-                            _twoDay.Text = $"{value.DateTime:ddd}";
-                            _twoIcon.Text = Weather.Icons[weateher.Icon];
-                            _twoLow.Text = $"L {value.Temp.Min:#}°";
-                            _twoHigh.Text = $"H {value.Temp.Max:#}°";
+                            UpdateControls(_twoDay, _twoIcon, _twoLow, _twoHigh, value, weather);
                             break;
                         case 3:
-                            _threeDay.Text = $"{value.DateTime:ddd}";
-                            _threeIcon.Text = Weather.Icons[weateher.Icon];
-                            _threeLow.Text = $"L {value.Temp.Min:#}°";
-                            _threeHigh.Text = $"H {value.Temp.Max:#}°";
+                            UpdateControls(_threeDay, _threeIcon, _threeLow, _threeHigh, value, weather);
                             break;
                         case 4:
-                            _fourDay.Text = $"{value.DateTime:ddd}";
-                            _fourIcon.Text = Weather.Icons[weateher.Icon];
-                            _fourLow.Text = $"L {value.Temp.Min:#}°";
-                            _fourHigh.Text = $"H {value.Temp.Max:#}°";
+                            UpdateControls(_fourDay, _fourIcon, _fourLow, _fourHigh, value, weather);
                             break;
                         case 5:
-                            _fiveDay.Text = $"{value.DateTime:ddd}";
-                            _fiveIcon.Text = Weather.Icons[weateher.Icon];
-                            _fiveLow.Text = $"L {value.Temp.Min:#}°";
-                            _fiveHigh.Text = $"H {value.Temp.Max:#}°";
+                            UpdateControls(_fiveDay, _fiveIcon, _fiveLow, _fiveHigh, value, weather);
                             break;
                     }
                 }
 
                 _fadeIn.Begin();
             }
+        }
+
+        void UpdateControls(TextBlock day, 
+                            TextBlock icon, 
+                            TextBlock low, 
+                            TextBlock high, 
+                            Models.List value, 
+                            Models.Weather weather)
+        {
+            day.Text = $"{value.DateTime:ddd}";
+            icon.Text = Weather.Icons[weather.Icon];
+            low.Text = $"L {value.Temp.Min:#}°";
+            high.Text = $"H {value.Temp.Max:#}°";
         }
     }
 }

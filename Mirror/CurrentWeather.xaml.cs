@@ -12,6 +12,8 @@ namespace Mirror
 {
     public sealed partial class CurrentWeather : UserControl
     {
+        DispatcherTimer _timer = new DispatcherTimer();
+
         public CurrentWeather()
         {
             InitializeComponent();            
@@ -29,7 +31,18 @@ namespace Mirror
             _loading.Visibility = isContentVisible ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        async void OnLoaded(object sender, RoutedEventArgs e) => await LoadWeatherAsync();
+        async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            await LoadWeatherAsync();
+
+            _timer.Stop();
+            _timer.Interval = TimeSpan.FromHours(1);
+            _timer.Tick -= OnTimerTick;
+            _timer.Tick += OnTimerTick;
+            _timer.Start();
+        }
+
+        async void OnTimerTick(object sender, object e) => await LoadWeatherAsync();
 
         async Task LoadWeatherAsync()
         {

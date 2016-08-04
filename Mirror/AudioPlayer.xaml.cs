@@ -40,11 +40,11 @@ namespace Mirror
             var stream = await song.OpenStreamForReadAsync();
 
             var file = TagLib.File.Create(new StreamFileAbstraction(song.Name, stream, null));
-            var tags = file.Tag;
-
-            TrackChanged?.Invoke(this, new Song(tags.FirstAlbumArtist, tags.Title));
+            
+            TrackChanged?.Invoke(this, new Song(file.Tag));
 
             _mediaElement.SetSource(await song.OpenReadAsync(), song.ContentType);
+            _mediaElement.Play();
         }
     }
 }

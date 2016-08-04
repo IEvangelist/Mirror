@@ -21,7 +21,7 @@ namespace Mirror
     {
         public EventCalendar()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

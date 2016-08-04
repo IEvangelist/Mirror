@@ -46,7 +46,7 @@ namespace Mirror.Networking
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (Debugger.IsAttached)
                 {

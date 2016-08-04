@@ -38,7 +38,24 @@ namespace Mirror.Extensions
                 return false;
             }
 
-            return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1; 
+            return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1;
+        }
+
+        internal static string NullIfEmpty(this string value) =>
+            string.IsNullOrWhiteSpace(value) ? null : value;        
+
+        internal static string Coalesce(this string root, params string[] others)
+        {
+            string value = root.NullIfEmpty();
+            if (value != null) return value;
+
+            for (var i = 0; i < others.Length; ++ i)
+            {
+                value = others[i].NullIfEmpty();
+                if (value != null) return value;
+            }
+
+            return string.Empty;
         }
     }
 }

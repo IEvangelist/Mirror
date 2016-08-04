@@ -9,7 +9,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
-
-    </Grid>
+    <StackPanel Orientation="Horizontal">
+        <Border CornerRadius="6" Padding="12" BorderThickness="2" BorderBrush="Azure">
+            <TextBlock x:Name="_eventDayOne" Text="Thu, 28th" FontSize="22" />
+        </Border>
+    </StackPanel>
 </UserControl>

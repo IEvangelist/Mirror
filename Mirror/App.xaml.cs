@@ -2,6 +2,7 @@
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,7 @@ namespace Mirror
             Suspending += OnSuspending;
             UnhandledException += OnUnhandledException;
 
+            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
         }
 
