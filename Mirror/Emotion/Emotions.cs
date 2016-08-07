@@ -23,7 +23,7 @@ namespace Mirror.Emotion
                 [Emotions.Anger] = new[]
                 {
                     "Phew, watch out!",
-                    "wow, you looked pissed...",
+                    "Wow, you looked pissed...",
                     "Why so angry?",
                     "Really, c'mon now - cheer up",
                     "Temper, temper!"
@@ -55,7 +55,7 @@ namespace Mirror.Emotion
                 [Emotions.Neutral] = new[]
                 {
                     "Show me your smile",
-                    "Fine, don't say 'Hello'",
+                    "Fine, don't say \"Hello\"",
                     "Why so smug?"
                 },
                 [Emotions.Sadness] = new[]
@@ -68,7 +68,7 @@ namespace Mirror.Emotion
                 },
                 [Emotions.Surprise] = new[]
                 {
-                    "WOW",
+                    "WOW!",
                     "Did I miss something?",
                     "Surprised to see me?",
                     "Lower your eyebrows"

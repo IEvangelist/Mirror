@@ -7,11 +7,56 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="OnLoaded">
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="Fade" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="White" Offset="0"/>
+            <GradientStop Color="Transparent" Offset="1.0"/>
+        </LinearGradientBrush>
+        <Storyboard x:Name="_fadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="_eventContainer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal">
-        <Border CornerRadius="6" Padding="12" BorderThickness="2" BorderBrush="Azure">
-            <TextBlock x:Name="_eventDayOne" Text="Thu, 28th" FontSize="22" />
+    <StackPanel x:Name="_eventContainer" Orientation="Vertical" Opacity="0">
+        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
+            <StackPanel Orientation="Vertical" Padding="12">
+                <TextBlock x:Name="_eventDayOne" FontSize="22" />
+                <TextBlock x:Name="_eventTimeOne" FontSize="16" />
+                <TextBlock x:Name="_eventTitleOne" FontSize="18" />
+            </StackPanel>
+        </Border>
+        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
+            <StackPanel Orientation="Vertical" Padding="12">
+                <TextBlock x:Name="_eventDayTwo" FontSize="22" />
+                <TextBlock x:Name="_eventTimeTwo" FontSize="16" />
+                <TextBlock x:Name="_eventTitleTwo" FontSize="18" />
+            </StackPanel>
+        </Border>
+        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
+            <StackPanel Orientation="Vertical" Padding="12">
+                <TextBlock x:Name="_eventDayThree" FontSize="22" />
+                <TextBlock x:Name="_eventTimeThree" FontSize="16" />
+                <TextBlock x:Name="_eventTitleThree" FontSize="18" />
+            </StackPanel>
+        </Border>
+        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
+            <StackPanel Orientation="Vertical" Padding="12">
+                <TextBlock x:Name="_eventDayFour" FontSize="22" />
+                <TextBlock x:Name="_eventTimeFour" FontSize="16" />
+                <TextBlock x:Name="_eventTitleFour" FontSize="18" />
+            </StackPanel>
+        </Border>
+        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
+            <StackPanel Orientation="Vertical" Padding="12">
+                <TextBlock x:Name="_eventDayFive" FontSize="22" />
+                <TextBlock x:Name="_eventTimeFive" FontSize="16" />
+                <TextBlock x:Name="_eventTitleFive" FontSize="18" />
+            </StackPanel>
         </Border>
     </StackPanel>
 </UserControl>

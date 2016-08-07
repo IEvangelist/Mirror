@@ -17,7 +17,8 @@ namespace Mirror.Calendar
 
             if (parameters.ContainsKey(TimeZoneId) && parameters[TimeZoneId].Count == 1)
             {
-                return TimeZoneInfo.FindSystemTimeZoneById(parameters[TimeZoneId][0]);
+                var scrubbedValue = parameters[TimeZoneId][0].Replace("\"", string.Empty);
+                return TimeZoneInfo.FindSystemTimeZoneById(scrubbedValue);
             }
 
             return null;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mirror.Extensions;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -31,16 +32,24 @@ namespace Mirror
 
         void UpdateClock()
         {
-            var now = DateTime.Now;
+            var now = GetLocalTime();
             _timeLabel.Text = now.ToString("h:mm");
             _secondsLabel.Text = now.ToString("ss");
-            _dayAndDateLabel.Text = $"{now:dddd}, {now:MMMM} {now:dd}";
+            _dayAndDateLabel.Text = $"{now:dddd}, {now:MMMM} {now.Day.ToOrdinalString()}";
         }
 
         void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _timer.Tick -= OnTimerTick;
             _timer.Stop();
+        }
+
+        DateTime GetLocalTime()
+        {
+            var utcNow = DateTime.UtcNow;
+            var explicitlyUtc = DateTime.SpecifyKind(utcNow, DateTimeKind.Utc);
+
+            return explicitlyUtc.ToLocalTime();
         }
     }
 }

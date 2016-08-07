@@ -23,8 +23,7 @@ namespace Mirror.Networking
 
         static async Task<T> GetAsyncImpl<T>(string url, Func<HttpClient> getClient = null)
         {
-            T result = default(T);
-            getClient = getClient ?? (() => new HttpClient());
+            T result = default(T);            
             var response = await GetRawAsync(url, getClient);
             if (!string.IsNullOrWhiteSpace(response))
             {
@@ -36,8 +35,9 @@ namespace Mirror.Networking
         internal static async Task<string> GetRawAsync(string url, Func<HttpClient> getClient)
         {
             Contract.Assert(url != null);
-            Contract.Assert(getClient != null);
-            
+
+            getClient = getClient ?? (() => new HttpClient());
+
             using (var client = getClient?.Invoke())
             {
                 return await client.GetStringAsync(url);

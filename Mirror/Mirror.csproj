@@ -136,6 +136,10 @@
     <Compile Include="Calendar\TimeZoneParser.cs" />
     <Compile Include="Calendar\vEvent.cs" />
     <Compile Include="Calendar\Parser.cs" />
+    <Compile Include="Commands\CommandDispatcher.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\VolumeCommand.cs" />
+    <Compile Include="Core\DebugHelper.cs" />
     <Compile Include="Core\Emoticons.cs" />
     <Compile Include="Extensions\AsyncExtensions.cs" />
     <Compile Include="Extensions\TryParseExtensions.cs" />

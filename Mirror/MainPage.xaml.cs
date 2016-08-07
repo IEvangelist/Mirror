@@ -10,19 +10,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
+using Windows.Media.SpeechRecognition;
+using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -41,8 +44,11 @@ namespace Mirror
         bool _isStreaming;
         bool _isProcessing;
         FaceTracker _faceTracker;
+        SpeechRecognizer _speechRecognizer;
+        SpeechSynthesizer _speechSynthesizer;
         DispatcherTimer _frameProcessingTimer;
         VideoEncodingProperties _videoProperties;
+        StringBuilder _dictatedTextBuilder = new StringBuilder();
         SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
@@ -61,7 +67,104 @@ namespace Mirror
             // Enusre that our face-tracker is initialized before invoking a change of the strem-state.
             _faceTracker = await FaceTracker.CreateAsync();
 
-            await Task.WhenAll(ChangeStreamStateAsync(true));
+            _speechSynthesizer = new SpeechSynthesizer();
+            _speechSynthesizer.Voice =
+                SpeechSynthesizer.AllVoices
+                                 .FirstOrDefault(voice =>
+                                                 voice.Gender == VoiceGender.Female &&
+                                                 voice.Language.Contains("en-US"));
+
+            await Task.WhenAll(ChangeStreamStateAsync(true),
+                               InitializeSpeechRecognizerAsync());
+        }
+        private async Task InitializeSpeechRecognizerAsync()
+        {
+            if (_speechRecognizer != null)
+            {
+                _speechRecognizer.StateChanged -= OnSpeechRecognizerStateChanged;
+                _speechRecognizer.ContinuousRecognitionSession.Completed -= OnContinuousRecognitionSessionCompleted;
+                _speechRecognizer.ContinuousRecognitionSession.ResultGenerated -= OnContinuousRecognitionSessionResultGenerated;
+                _speechRecognizer.HypothesisGenerated -= OnSpeechRecognitionHypothesisGenerated;
+                _speechRecognizer.Dispose();
+                _speechRecognizer = null;
+            }
+
+            _speechRecognizer = new SpeechRecognizer();
+            _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;            
+            _speechRecognizer.Constraints
+                             .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, 
+                                                                       "dictation"));
+
+            var result = await _speechRecognizer.CompileConstraintsAsync();
+
+            _speechRecognizer.ContinuousRecognitionSession.Completed += OnContinuousRecognitionSessionCompleted;
+            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += OnContinuousRecognitionSessionResultGenerated;
+            _speechRecognizer.HypothesisGenerated += OnSpeechRecognitionHypothesisGenerated;
+
+            await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
+        }
+
+        private asc void OnSpeechRecognizerStateChanged(
+            SpeechRecognizer sender,
+            SpeechRecognizerStateChangedEventArgs args)
+        {
+            //await this.ThreadSafeAsync(() => _hypothesis.Text = args.State.ToString());
+            switch (args.State)
+            {
+                case SpeechRecognizerState.Idle:                    
+                    break;
+                case SpeechRecognizerState.Capturing:
+                    break;
+                case SpeechRecognizerState.Processing:
+                    break;
+                case SpeechRecognizerState.SoundStarted:
+                    break;
+                case SpeechRecognizerState.SoundEnded:
+                    break;
+                case SpeechRecognizerState.SpeechDetected:
+                    break;
+                case SpeechRecognizerState.Paused:
+                    break;
+            }
+        }
+
+        private async void OnContinuousRecognitionSessionCompleted(
+            SpeechContinuousRecognitionSession sender,
+            SpeechContinuousRecognitionCompletedEventArgs args)
+        {
+            // await _speechRecognizer.ContinuousRecognitionSession.StopAsync();
+            await InitializeSpeechRecognizerAsync();
+        }
+
+        private async void OnContinuousRecognitionSessionResultGenerated(
+            SpeechContinuousRecognitionSession sender,
+            SpeechContinuousRecognitionResultGeneratedEventArgs args)
+        {
+            // We may choose to discard content that has low confidence, as that could indicate that we're picking up
+            // noise via the microphone, or someone could be talking out of earshot.
+            if (args.Result.Confidence == SpeechRecognitionConfidence.Medium ||
+                args.Result.Confidence == SpeechRecognitionConfidence.High)
+            {
+                _dictatedTextBuilder.Append(args.Result.Text + " ");
+
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    _hypothesis.Text = _dictatedTextBuilder.ToString();
+                });
+            }
+        }
+
+        private async void OnSpeechRecognitionHypothesisGenerated(
+            SpeechRecognizer sender, 
+            SpeechRecognitionHypothesisGeneratedEventArgs args)
+        {
+            string hypothesis = args.Hypothesis.Text;            
+            string hypothesisText = $"{_dictatedTextBuilder} {hypothesis} ...";
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                _hypothesis.Text = hypothesisText;
+            });
         }
 
         async void OnUnloaded(object sender, RoutedEventArgs e) => await Photos.CleanupAsync();
@@ -148,7 +251,7 @@ namespace Mirror
                 _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
                 _frameProcessingTimer.Start();
             }
-            catch
+            catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
             {
                 successful = false;
             }
@@ -166,7 +269,7 @@ namespace Mirror
                 {
                     await _mediaManager.StopPreviewAsync();
                 }
-                catch
+                catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
                 {
                     // Since we're going to destroy the MediaCapture object there's nothing to do here
                 }
@@ -217,29 +320,43 @@ namespace Mirror
                                         .Where(result => result != Result.Empty)
                                         .FirstOrDefault();
 
-                            _messageLabel.Text =
-                                mostProbable != null
-                                    ? EmotionMessages.Messages[mostProbable.Emotion].RandomElement()
-                                    : string.Empty;
-                            _emoticon.Text = 
-                                mostProbable != null
-                                    ? Emoticons.From(mostProbable.Emotion)
-                                    : string.Empty;
+                            if (mostProbable == null)
+                            {
+                                _messageLabel.Text = string.Empty;
+                                _emoticon.Text = string.Empty;
+                            }
+                            else
+                            {
+                                _emoticon.Text = Emoticons.From(mostProbable.Emotion);
+
+                                var current = _messageLabel.Text;
+                                var message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
+                                while (current == message)
+                                {
+                                    message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
+                                }
+                                _messageLabel.Text = message;
+                                await ReadMessageAsync(message);
+                            }
                         }
                     });
                 }
             }
-            catch
+            catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
             {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
             }
             finally
             {
                 _frameProcessingSemaphore.Release();
             }
+        }
+
+        private async Task ReadMessageAsync(string message)
+        {            
+            var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(message);
+
+            _speaker.SetSource(stream, stream.ContentType);
+            _speaker.Play();
         }
 
         void SetupVisualization(Size framePixelSize, IList<DetectedFace> foundFaces)
@@ -254,7 +371,8 @@ namespace Mirror
                 double widthScale = framePixelSize.Width / actualWidth;
                 double heightScale = framePixelSize.Height / actualHeight;
 
-                foreach (var face in foundFaces)
+                var face = GetClosestFace(foundFaces);
+                if (face != null)
                 {
                     var box = new Rectangle
                     {
@@ -262,7 +380,7 @@ namespace Mirror
                         Height = (uint)(face.FaceBox.Height / heightScale),
                         Fill = new SolidColorBrush(Colors.Transparent),
                         Stroke = new SolidColorBrush(Colors.Azure),
-                        Opacity = .5,
+                        Opacity = .25,
                         StrokeThickness = 2,
                         RadiusX = 15,
                         RadiusY = 15,
@@ -273,6 +391,10 @@ namespace Mirror
                 }
             }
         }
+
+        static DetectedFace GetClosestFace(IList<DetectedFace> faces)
+            => faces?.OrderByDescending(face => face.FaceBox.Height + face.FaceBox.Width)
+                     .FirstOrDefault();
 
         async Task ChangeStreamStateAsync(bool isStreaming)
         {

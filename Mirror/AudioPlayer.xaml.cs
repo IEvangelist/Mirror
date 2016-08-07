@@ -29,7 +29,7 @@ namespace Mirror
 
         async Task LoadAudioAsync()
         {
-            if (DesignMode.DesignModeEnabled)
+            if (true ) /// DesignMode.DesignModeEnabled)
             {
                 return;
             }
@@ -42,7 +42,7 @@ namespace Mirror
             var file = TagLib.File.Create(new StreamFileAbstraction(song.Name, stream, null));
             
             TrackChanged?.Invoke(this, new Song(file.Tag));
-
+            
             _mediaElement.SetSource(await song.OpenReadAsync(), song.ContentType);
             _mediaElement.Play();
         }

@@ -67,7 +67,7 @@ namespace Mirror.Calendar
                                        DateTimeKind kind, 
                                        TimeZoneInfo timeZone = null)
         {
-            DateTime result = DateTime.MinValue;
+            var result = DateTime.MinValue;
             try
             {
                 if (year > 9999)

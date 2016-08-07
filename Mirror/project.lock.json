@@ -15,7 +15,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -290,16 +290,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -2228,7 +2229,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -2450,16 +2451,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -4549,7 +4551,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -4772,16 +4774,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -6909,7 +6912,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -7134,16 +7137,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -9239,7 +9243,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -9465,16 +9469,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -11608,7 +11613,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -11833,16 +11838,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -13938,7 +13944,7 @@
           "lib/win8/_._": {}
         }
       },
-      "Microsoft.Bcl.Build/1.0.14": {
+      "Microsoft.Bcl.Build/1.0.21": {
         "type": "package"
       },
       "Microsoft.CSharp/4.0.1": {
@@ -14164,16 +14170,17 @@
           "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll": {}
         }
       },
-      "Microsoft.ProjectOxford.Emotion/1.0.310": {
+      "Microsoft.ProjectOxford.Emotion/1.0.326": {
         "type": "package",
         "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.21",
           "Microsoft.ProjectOxford.Common": "1.0.308"
         },
         "compile": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll": {}
+          "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.0.1": {
@@ -16385,22 +16392,15 @@
         "lib/wpa81/_._"
       ]
     },
-    "Microsoft.Bcl.Build/1.0.14": {
-      "sha512": "cDLKSvNvRa519hplsbSoYqO69TjdDIhfjtKUM0g20/nVROoWsGav9KCI9HtnGjLmdV1+TcUUDhbotcllibjPEA==",
+    "Microsoft.Bcl.Build/1.0.21": {
+      "sha512": "sgHu4mIt0+NVGyI12Bj4hLPypNK55UOH+ologj2LqDCjxq3EbIxe/uAtHjY+fEwbE1dtsAHG8SXHf+V/EYbKTg==",
       "type": "package",
       "files": [
         "License-Stable.rtf",
-        "Microsoft.Bcl.Build.1.0.14.nupkg.sha512",
+        "Microsoft.Bcl.Build.1.0.21.nupkg.sha512",
         "Microsoft.Bcl.Build.nuspec",
-        "content/net40/_._",
-        "content/netcore45/_._",
-        "content/portable-net40+win8+sl4+wp71+wpa81/_._",
-        "content/sl4-windowsphone71/_._",
-        "content/sl4/_._",
-        "tools/Install.ps1",
-        "tools/Microsoft.Bcl.Build.Tasks.dll",
-        "tools/Microsoft.Bcl.Build.targets",
-        "tools/Uninstall.ps1"
+        "build/Microsoft.Bcl.Build.Tasks.dll",
+        "build/Microsoft.Bcl.Build.targets"
       ]
     },
     "Microsoft.CSharp/4.0.1": {
@@ -16692,13 +16692,13 @@
         "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Common.dll"
       ]
     },
-    "Microsoft.ProjectOxford.Emotion/1.0.310": {
-      "sha512": "TaLN6mUmjxFBJpeHVQlNsMQnux5nFne3LHFQWECQ+girbbBsJ1TygVFc44ZwHE4V25S8Nt0jZHl+qzGTXrm78g==",
+    "Microsoft.ProjectOxford.Emotion/1.0.326": {
+      "sha512": "EgBqx+hQ6NWIPXz4nkr+9eS+3/4hDy3UAy3+kynIOD/E6/XTsMVEFjeQ06Et2SLg67s43mdcf5kyvTU8VGShcg==",
       "type": "package",
       "files": [
-        "Microsoft.ProjectOxford.Emotion.1.0.310.nupkg.sha512",
+        "Microsoft.ProjectOxford.Emotion.1.0.326.nupkg.sha512",
         "Microsoft.ProjectOxford.Emotion.nuspec",
-        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10/Microsoft.ProjectOxford.Emotion.dll"
+        "lib/portable45-net45+win8+wp8+wpa81/Microsoft.ProjectOxford.Emotion.dll"
       ]
     },
     "Microsoft.VisualBasic/10.0.1": {
@@ -22527,7 +22527,7 @@
   "projectFileDependencyGroups": {
     "": [
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
-      "Microsoft.ProjectOxford.Emotion >= 1.0.310",
+      "Microsoft.ProjectOxford.Emotion >= 1.0.326",
       "Newtonsoft.Json >= 9.0.1",
       "TagLib.Portable >= 1.0.4"
     ],
