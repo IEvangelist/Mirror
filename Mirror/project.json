@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Microsoft.ProjectOxford.Emotion": "1.0.326",
     "Newtonsoft.Json": "9.0.1",

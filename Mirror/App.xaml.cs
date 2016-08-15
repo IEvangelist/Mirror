@@ -1,8 +1,9 @@
-﻿using Mirror.IO;
+﻿using MetroLog;
+using Mirror.IO;
+using Mirror.Logging;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,12 +27,18 @@ namespace Mirror
 
             Suspending += OnSuspending;
             UnhandledException += OnUnhandledException;
-
-            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
+            
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+            GlobalCrashHandler.Configure();
         }
 
-        async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) => await Photos.CleanupAsync();
+        async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            await Photos.CleanupAsync();
+
+            var logger = LoggerFactory.GetAsynchronous<App>();
+            await logger?.FatalAsync(e.Message, e.Exception);
+        }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points

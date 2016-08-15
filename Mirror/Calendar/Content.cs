@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Mirror.Core;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -32,20 +34,20 @@ namespace Mirror.Calendar
             {
                 return Parameters[key].Contains(value);
             }
-            catch
+            catch (Exception ex) when (DebugHelper.IsNotHandled<Content>(ex))
             {
                 return false;
             }
         }
 
-        public override string ToString() => Regex.Unescape(Value);
-            //Regex.Replace(Value.Replace(Environment.NewLine + "\t", string.Empty)
-            //            .Replace(Environment.NewLine + " ", "")
-            //            .Replace("\n\r", Environment.NewLine)
-            //            .Replace("\\n\\r", Environment.NewLine)
-            //            .Replace("\n", Environment.NewLine)
-            //            .Replace("\\n", Environment.NewLine)
-            //            .Replace("\r", Environment.NewLine), @"\\(.)", "$1")
-            //            .Trim();
+        public override string ToString() =>
+            Regex.Replace(Value.Replace(Environment.NewLine + "\t", string.Empty)
+                 .Replace(Environment.NewLine + " ", "")
+                 .Replace("\n\r", Environment.NewLine)
+                 .Replace("\\n\\r", Environment.NewLine)
+                 .Replace("\n", Environment.NewLine)
+                 .Replace("\\n", Environment.NewLine)
+                 .Replace("\r", Environment.NewLine), @"\\(.)", "$1")
+                 .Trim();
     }
 }

@@ -2,7 +2,6 @@
 using Mirror.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -46,12 +45,9 @@ namespace Mirror.Networking
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (DebugHelper.IsNotHandled<CalendarClient>(ex))
             {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
+                throw;
             }
 
             return await Task.FromResult(Empty);

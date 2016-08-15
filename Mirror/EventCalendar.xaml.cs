@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -28,7 +29,6 @@ namespace Mirror
                                     e.StartDateTime > DateTime.Now &&
                                     e.Summary.IndexOf("cancel", StringComparison.OrdinalIgnoreCase) == -1)
                              .OrderBy(e => e.StartDateTime)
-                             .Take(10)
                              .ToArray();
 
                 if (events != null)
@@ -52,10 +52,27 @@ namespace Mirror
                             case 4:
                                 await UpdateEventDetailsAsync(_eventDayFive, _eventTimeFive, _eventTitleFive, events[index]);
                                 break;
+                            case 5:
+                                await UpdateEventDetailsAsync(_eventDaySix, _eventTimeSix, _eventTitleSix, events[index]);
+                                break;
+                            case 6:
+                                await UpdateEventDetailsAsync(_eventDaySeven, _eventTimeSeven, _eventTitleSeven, events[index]);
+                                break;
                         }
                     }
 
+                    var view = ApplicationView.GetForCurrentView();
+                    _sixthBorder.Visibility =
+                        _seventhBorder.Visibility =
+                            view.Orientation == ApplicationViewOrientation.Portrait
+                                ? Visibility.Visible
+                                : Visibility.Collapsed;
+
                     _fadeIn.Begin();
+                }
+                else
+                {
+                    Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -70,7 +87,7 @@ namespace Mirror
                 var startDate = e.StartDateTime.GetValueOrDefault();
                 var endDate = e.EndDateTime.GetValueOrDefault();
 
-                day.Text = $"{startDate:ddd}, {startDate:MMMM} {startDate.Day.ToOrdinalString()}";
+                day.Text = $"{startDate:ddd}, {startDate:MMM} {startDate.Day.ToOrdinalString()}";
                 hours.Text = $"{startDate:h:mm}-{endDate:h:mm tt}";
                 title.Text = e.Summary;
             });

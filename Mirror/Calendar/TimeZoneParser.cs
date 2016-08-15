@@ -17,11 +17,23 @@ namespace Mirror.Calendar
 
             if (parameters.ContainsKey(TimeZoneId) && parameters[TimeZoneId].Count == 1)
             {
-                var scrubbedValue = parameters[TimeZoneId][0].Replace("\"", string.Empty);
+                var scrubbedValue = ScrubTimeZone(parameters[TimeZoneId][0]);
                 return TimeZoneInfo.FindSystemTimeZoneById(scrubbedValue);
             }
 
             return null;
         }
+
+        static string ScrubTimeZone(string timezone)
+        {
+            var value =
+                timezone.Replace("\"", string.Empty)
+                        .Replace("(", string.Empty)
+                        .Replace(")", string.Empty);
+
+            return value.Contains("-")
+                ? value.Substring(0, 3)
+                : value;
+        }                       
     }
 }

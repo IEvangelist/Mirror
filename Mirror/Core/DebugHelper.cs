@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MetroLog;
+using Mirror.Logging;
+using System;
 using System.Diagnostics;
 
 
@@ -6,7 +8,7 @@ namespace Mirror.Core
 {
     static class DebugHelper
     {
-        internal static bool IsNotHandled(Exception ex)
+        internal static bool IsNotHandled<T>(Exception ex) where T : class
         {
             bool isHandled = true;
 
@@ -16,7 +18,9 @@ namespace Mirror.Core
             }
             else
             {
-                Debug.WriteLine(ex);
+                var logger = LoggerFactory.Get<T>();
+                logger?.Error(ex.Message, ex);
+
                 isHandled = false;
             }
 

@@ -1,13 +1,16 @@
-﻿using Microsoft.ProjectOxford.Emotion;
+﻿#region Using Statement(s)
+
+using MetroLog;
+using Microsoft.ProjectOxford.Emotion;
 using Mirror.Core;
 using Mirror.Emotion;
 using Mirror.Extensions;
 using Mirror.IO;
+using Mirror.Logging;
 using Mirror.Models;
-using Mirror.Networking;
+using Mirror.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,13 +28,14 @@ using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 using RawEmotion = Microsoft.ProjectOxford.Emotion.Contract.Emotion;
+
+#endregion
 
 
 namespace Mirror
@@ -41,8 +45,11 @@ namespace Mirror
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        #region Field(s)
+
         bool _isStreaming;
         bool _isProcessing;
+        ILogger _logger = LoggerFactory.Get<MainPage>();
         FaceTracker _faceTracker;
         SpeechRecognizer _speechRecognizer;
         SpeechSynthesizer _speechSynthesizer;
@@ -53,16 +60,19 @@ namespace Mirror
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
 
+        #endregion
+
         public MainPage()
         {
             InitializeComponent();
+            DataContext = new HudViewModel();
         }
 
         async void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            InitializeInternet();
-
+        {   
             _messageLabel.Text = "Hello";
+
+            _logger.Error("Testing 1, 2, 3...");
 
             // Enusre that our face-tracker is initialized before invoking a change of the strem-state.
             _faceTracker = await FaceTracker.CreateAsync();
@@ -77,7 +87,10 @@ namespace Mirror
             await Task.WhenAll(ChangeStreamStateAsync(true),
                                InitializeSpeechRecognizerAsync());
         }
-        private async Task InitializeSpeechRecognizerAsync()
+
+        async void OnUnloaded(object sender, RoutedEventArgs e) => await Photos.CleanupAsync();
+
+        async Task InitializeSpeechRecognizerAsync()
         {
             if (_speechRecognizer != null)
             {
@@ -104,39 +117,21 @@ namespace Mirror
             await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
         }
 
-        private asc void OnSpeechRecognizerStateChanged(
+        void OnSpeechRecognizerStateChanged(
             SpeechRecognizer sender,
             SpeechRecognizerStateChangedEventArgs args)
         {
-            //await this.ThreadSafeAsync(() => _hypothesis.Text = args.State.ToString());
-            switch (args.State)
-            {
-                case SpeechRecognizerState.Idle:                    
-                    break;
-                case SpeechRecognizerState.Capturing:
-                    break;
-                case SpeechRecognizerState.Processing:
-                    break;
-                case SpeechRecognizerState.SoundStarted:
-                    break;
-                case SpeechRecognizerState.SoundEnded:
-                    break;
-                case SpeechRecognizerState.SpeechDetected:
-                    break;
-                case SpeechRecognizerState.Paused:
-                    break;
-            }
+            _logger.Info($"SpeechRecognizer.State = {args.State}");
         }
 
-        private async void OnContinuousRecognitionSessionCompleted(
+        async void OnContinuousRecognitionSessionCompleted(
             SpeechContinuousRecognitionSession sender,
             SpeechContinuousRecognitionCompletedEventArgs args)
         {
-            // await _speechRecognizer.ContinuousRecognitionSession.StopAsync();
             await InitializeSpeechRecognizerAsync();
         }
 
-        private async void OnContinuousRecognitionSessionResultGenerated(
+        async void OnContinuousRecognitionSessionResultGenerated(
             SpeechContinuousRecognitionSession sender,
             SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
@@ -154,7 +149,7 @@ namespace Mirror
             }
         }
 
-        private async void OnSpeechRecognitionHypothesisGenerated(
+        async void OnSpeechRecognitionHypothesisGenerated(
             SpeechRecognizer sender, 
             SpeechRecognitionHypothesisGeneratedEventArgs args)
         {
@@ -166,8 +161,6 @@ namespace Mirror
                 _hypothesis.Text = hypothesisText;
             });
         }
-
-        async void OnUnloaded(object sender, RoutedEventArgs e) => await Photos.CleanupAsync();
 
         async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
         {
@@ -196,12 +189,12 @@ namespace Mirror
         async Task<string> GetNamedCameraOrDefault(string cameraName = "Microsoft® LifeCam HD-3000")
         {
             var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-            return videoDevices.Where(cam =>
-                                      cam.IsEnabled &&
-                                      cam.Name.Equals(cameraName, StringComparison.OrdinalIgnoreCase))
-                               .Select(cam => cam.Id)
+            return videoDevices.Where(camera =>
+                                      camera.IsEnabled &&
+                                      camera.Name.Equals(cameraName, StringComparison.OrdinalIgnoreCase))
+                               .Select(camera => camera.Id)
                                .FirstOrDefault()
-                   ?? videoDevices.Select(cam => cam.Id)
+                   ?? videoDevices.Select(camera => camera.Id)
                                   .SingleOrDefault();
         }
 
@@ -251,7 +244,7 @@ namespace Mirror
                 _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
                 _frameProcessingTimer.Start();
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
+            catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
             {
                 successful = false;
             }
@@ -269,7 +262,7 @@ namespace Mirror
                 {
                     await _mediaManager.StopPreviewAsync();
                 }
-                catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
+                catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
                 {
                     // Since we're going to destroy the MediaCapture object there's nothing to do here
                 }
@@ -342,7 +335,7 @@ namespace Mirror
                     });
                 }
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled(ex))
+            catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
             {
             }
             finally
@@ -351,7 +344,7 @@ namespace Mirror
             }
         }
 
-        private async Task ReadMessageAsync(string message)
+        async Task ReadMessageAsync(string message)
         {            
             var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(message);
 
@@ -434,37 +427,6 @@ namespace Mirror
             var ignored = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 await ChangeStreamStateAsync(false);
-            });
-        }
-
-        void InitializeInternet()
-        {
-            Internet.ConnectionChanged = OnConnectionChanged;
-            Internet.Initialize();
-        }
-
-        async Task OnConnectionChanged(ConnectionStatus connection)
-        {
-            await this.ThreadSafeAsync(() =>
-            {
-                switch (connection.Type)
-                {
-                    case ConnectionType.Ethernet:
-                        _connectionImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/ethernet.png"));
-                        break;
-                    case ConnectionType.Wifi:
-                        string wifi = "wifi";
-                        var bars = connection.SignalBars.GetValueOrDefault();
-                        if (bars > 0 && bars < 4) wifi += $"-{bars}";
-                        _connectionImage.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{wifi}.png"));
-                        break;
-
-                    case ConnectionType.None:
-                    case ConnectionType.Cellular:
-                    default:
-                        _connectionImage.Source = null;
-                        break;
-                }
             });
         }
 

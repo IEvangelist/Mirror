@@ -3,6 +3,17 @@
   "version": 2,
   "targets": {
     "UAP,Version=v10.0": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -2217,6 +2228,17 @@
       }
     },
     "UAP,Version=v10.0/win10-arm": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -4539,6 +4561,17 @@
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -6900,6 +6933,17 @@
       }
     },
     "UAP,Version=v10.0/win10-x64": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -9231,6 +9275,17 @@
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -11601,6 +11656,17 @@
       }
     },
     "UAP,Version=v10.0/win10-x86": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -13932,6 +13998,17 @@
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
+      "MetroLog/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/win81/MetroLog.WinRT.winmd": {},
+          "lib/win81/MetroLog.dll": {}
+        }
+      },
       "Microsoft.Bcl/1.1.10": {
         "type": "package",
         "dependencies": {
@@ -16303,6 +16380,40 @@
     }
   },
   "libraries": {
+    "MetroLog/1.0.1": {
+      "sha512": "9+i0lIT+OAf9FQOrnSbyxG5RbBtRUthIQAn73c9Y1z0v+2dPCKn9oTPTt8njHPMzy5lRoT9MDQRkYSqJ7aVqgA==",
+      "type": "package",
+      "files": [
+        "MetroLog.1.0.1.nupkg.sha512",
+        "MetroLog.nuspec",
+        "content/win8-javascript/MetroLog ReadMe.txt",
+        "content/win8-javascript/typings/MetroLog.WinRT.d.ts",
+        "content/win8-javascript/typings/winrt.d.ts",
+        "lib/MonoAndroid/MetroLog.dll",
+        "lib/MonoAndroid/MetroLog.pdb",
+        "lib/MonoTouch/MetroLog.dll",
+        "lib/MonoTouch/MetroLog.pdb",
+        "lib/Xamarin.iOS/MetroLog.dll",
+        "lib/Xamarin.iOS/MetroLog.pdb",
+        "lib/dotnet/MetroLog.dll",
+        "lib/dotnet/MetroLog.pdb",
+        "lib/net45/MetroLog.dll",
+        "lib/net45/MetroLog.pdb",
+        "lib/portable-net45+wp8+win8+wpa81/MetroLog.dll",
+        "lib/portable-net45+wp8+win8+wpa81/MetroLog.pdb",
+        "lib/win81/MetroLog.WinRT.pdb",
+        "lib/win81/MetroLog.WinRT.pri",
+        "lib/win81/MetroLog.WinRT.winmd",
+        "lib/win81/MetroLog.dll",
+        "lib/win81/MetroLog.pdb",
+        "lib/win81/MetroLog.pri",
+        "lib/wp8/MetroLog.dll",
+        "lib/wp8/MetroLog.pdb",
+        "lib/wpa81/MetroLog.dll",
+        "lib/wpa81/MetroLog.pdb",
+        "lib/wpa81/MetroLog.pri"
+      ]
+    },
     "Microsoft.Bcl/1.1.10": {
       "sha512": "+tTqoh/M1pyL8El3qLy30EcwnAtyvFoDZJtdG9Cbg/WdFbh4N8kyrq198XHuEL7lnJbeD0DRO8jcX5IIOh05cQ==",
       "type": "package",
@@ -22526,6 +22637,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
+      "MetroLog >= 1.0.1",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
       "Microsoft.ProjectOxford.Emotion >= 1.0.326",
       "Newtonsoft.Json >= 9.0.1",

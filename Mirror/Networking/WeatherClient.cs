@@ -1,4 +1,5 @@
-﻿using Mirror.Models;
+﻿using Mirror.Core;
+using Mirror.Models;
 using System;
 using System.Threading.Tasks;
 using static Mirror.Core.Settings;
@@ -6,7 +7,7 @@ using static Mirror.Core.Settings;
 
 namespace Mirror.Networking
 {
-    static class WeatherClient
+    class WeatherClient
     {
         const string BaseUrl = "http://api.openweathermap.org/data/2.5/";
 
@@ -29,7 +30,7 @@ namespace Mirror.Networking
             {
                 return await apiAsync();
             }
-            catch
+            catch (Exception ex) when (DebugHelper.IsNotHandled<WeatherClient>(ex))
             {
                 return await Task.FromResult(default(T));
             }
