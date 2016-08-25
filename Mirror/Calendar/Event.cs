@@ -4,23 +4,23 @@ using static Mirror.Calendar.Status;
 
 namespace Mirror.Calendar
 {
-    class Event
+   public class Event
     {
         static Func<Content, DateTime?> ParseDate = content =>
             DateParser.Parse(content.Value, TimeZoneParser.Parse(content.Parameters));
 
-        internal string Description { get; private set; }
-        internal string Summary { get; private set; }
-        internal string Location { get; private set; }
-        internal Guid? UniqueId { get; private set; }
-        internal Status? Status { get; private set; }
-        internal DateTime? TimeStamp { get; private set; }
-        internal DateTime? StartDateTime { get; private set; }
-        internal DateTime? EndDateTime { get; private set; }
+        public string Description { get; private set; }
+        public string Summary { get; private set; }
+        public string Location { get; private set; }
+        public Guid? UniqueId { get; private set; }
+        public Status? Status { get; private set; }
+        public DateTime? TimeStamp { get; private set; }
+        public DateTime? StartDateTime { get; private set; }
+        public DateTime? EndDateTime { get; private set; }
 
-        internal bool IsConfirmed => Status == Confirmed;
+        public bool IsConfirmed => Status == Confirmed;
 
-        internal static Event From(vEvent vEvent)
+        public static Event From(vEvent vEvent)
         {
             if (vEvent == null || vEvent.Contents == null) return null;
 

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace Mirror.Calendar
 {
-    class TimeZoneParser
+   public class TimeZoneParser
     {
         const string TimeZoneId = "TZID";
 
-        internal static TimeZoneInfo Parse(Dictionary<string, List<string>> parameters)
+        public static TimeZoneInfo Parse(Dictionary<string, List<string>> parameters)
         {
             if (parameters == null)
             {

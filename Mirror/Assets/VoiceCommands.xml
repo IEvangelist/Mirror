@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.2">
+  <CommandSet xml:lang="en-us" Name="EmotionApiSet_en-us">
+    <CommandPrefix>Emotion</CommandPrefix>
+    <Example>Look at me, How do I look, etc</Example>
+    <Command Name="lookAtMe">
+      <Example>Look at me</Example>
+      <ListenFor>[Look at] me</ListenFor>
+      <Feedback>Ah, there you are</Feedback>
+      <VoiceCommandService Target="EmotionVoiceCommandService" />
+    </Command>
+    <Command Name="howDoILook">
+      <Example>How do I look</Example>
+      <ListenFor>[How do] I [look]</ListenFor>
+      <Feedback>Ah, there you are</Feedback>
+      <VoiceCommandService Target="EmotionVoiceCommandService" />
+    </Command>    
+  </CommandSet>
+</VoiceCommands>

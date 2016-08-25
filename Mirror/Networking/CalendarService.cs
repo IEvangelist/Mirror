@@ -11,9 +11,14 @@ using static Mirror.Calendar.Calendar;
 
 namespace Mirror.Networking
 {
-    class CalendarClient
+    public interface ICalendarService
     {
-        internal static async Task<IEnumerable<Calendar.Calendar>> GetCalendarsAsync()
+        Task<IEnumerable<Calendar.Calendar>> GetCalendarsAsync();
+    }
+
+    public class CalendarService : ICalendarService
+    {
+        async Task<IEnumerable<Calendar.Calendar>> ICalendarService.GetCalendarsAsync()
         {
             var settings = Settings.Instance;
             var getCentareCalendarTask = GetCalendarAsync(settings.CentareCalendarUrl);
@@ -45,9 +50,9 @@ namespace Mirror.Networking
                     }
                 }
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<CalendarClient>(ex))
+            catch (Exception ex) when (DebugHelper.IsNotHandled<CalendarService>(ex))
             {
-                throw;
+                // Do nothing...
             }
 
             return await Task.FromResult(Empty);

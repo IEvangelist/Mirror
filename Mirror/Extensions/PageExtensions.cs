@@ -8,7 +8,7 @@ namespace Mirror.Extensions
 {
     static class PageExtensions
     {
-        internal static async Task ThreadSafeAsync(this Page page, Action action)
+        public static async Task ThreadSafeAsync(this Page page, Action action)
         {
             if (null == page) return;
 

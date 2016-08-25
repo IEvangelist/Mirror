@@ -7,13 +7,13 @@ using System.Text.RegularExpressions;
 
 namespace Mirror.Calendar
 {
-    class Content
+   public class Content
     {
-        internal string Name { get; private set; }
-        internal string Value { get; private set; }
-        internal Dictionary<string, List<string>> Parameters { get; } = new Dictionary<string, List<string>>();
+        public string Name { get; private set; }
+        public string Value { get; private set; }
+        public Dictionary<string, List<string>> Parameters { get; } = new Dictionary<string, List<string>>();
 
-        internal Content(string contentline)
+        public Content(string contentline)
         {
             contentline = contentline.Trim();
             Name = Regex.Match(contentline, @"(.*?)[;:]").Groups[1].Value;
@@ -28,7 +28,7 @@ namespace Mirror.Calendar
             }
         }
 
-        internal bool HasParameterAndValue(string key, string value)
+        public bool HasParameterAndValue(string key, string value)
         {
             try
             {

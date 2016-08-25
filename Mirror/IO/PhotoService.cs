@@ -8,17 +8,24 @@ using Windows.Storage;
 
 namespace Mirror.IO
 {
-    static class Photos
+    public interface IPhotoService
+    {
+        IAsyncOperation<StorageFile> CreateAsync();
+
+        Task CleanupAsync();
+    }
+
+    public class PhotoService : IPhotoService
     {
         const string PhotoName = "temporary";
         const string PhotoNameWithExtension = PhotoName + ".jpg";
 
-        internal static IAsyncOperation<StorageFile> CreateAsync() =>
+        IAsyncOperation<StorageFile> IPhotoService.CreateAsync() =>
             KnownFolders.PicturesLibrary
                         .CreateFileAsync(PhotoNameWithExtension,
                                          CreationCollisionOption.GenerateUniqueName);
 
-        internal static async Task CleanupAsync()
+        async Task IPhotoService.CleanupAsync()
         {
             var files = await KnownFolders.PicturesLibrary.GetFilesAsync();
 

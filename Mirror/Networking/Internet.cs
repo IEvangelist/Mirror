@@ -4,7 +4,7 @@ using Windows.Networking.Connectivity;
 
 namespace Mirror.Networking
 {
-    internal enum ConnectionType
+    public enum ConnectionType
     {
         None,
         Ethernet,
@@ -14,12 +14,12 @@ namespace Mirror.Networking
     
     struct ConnectionStatus
     {
-        internal ConnectionType Type { get; }
-        internal byte? SignalBars { get; }
-        internal bool IsConnectionAvailable => Type != default(ConnectionType);
+        public ConnectionType Type { get; }
+        public byte? SignalBars { get; }
+        public bool IsConnectionAvailable => Type != default(ConnectionType);
 
-        internal ConnectionStatus(ConnectionType type,
-                                  byte? signalBars= null)
+        public ConnectionStatus(ConnectionType type,
+                                byte? signalBars= null)
         {
             Type = type;
             SignalBars = signalBars;
@@ -28,7 +28,7 @@ namespace Mirror.Networking
 
     static class Internet
     {
-        internal static Action<ConnectionStatus> ConnectionChanged;
+        public static Action<ConnectionStatus> ConnectionChanged;
 
         static Internet()
         {
@@ -38,7 +38,7 @@ namespace Mirror.Networking
 
         static void OnNetworkStatusChanged(object sender) => CheckInternetAvailability();
 
-        internal static void Initialize() => CheckInternetAvailability();
+        public static void Initialize() => CheckInternetAvailability();
 
         static void CheckInternetAvailability()
         {

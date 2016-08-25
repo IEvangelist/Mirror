@@ -3,13 +3,13 @@
 
 namespace Mirror.Calendar
 {
-    class Calendar
+    public class Calendar
     {
-        internal static Calendar Empty => new Calendar();
+        public static Calendar Empty => new Calendar();
 
-        internal IEnumerable<Event> Events { get; }
+        public IEnumerable<Event> Events { get; }
 
-        internal Calendar(IEnumerable<Event> events)
+        public Calendar(IEnumerable<Event> events)
         {
             Events = events;
         }

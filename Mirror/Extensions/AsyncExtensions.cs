@@ -10,9 +10,9 @@ namespace Mirror.Extensions
 {
     static class AsyncExtensions
     {
-        internal static IEnumerable<Task> AsTasks(this IEnumerable<IAsyncAction> actions) => actions?.Select(action => action.AsTask());
+        public static IEnumerable<Task> AsTasks(this IEnumerable<IAsyncAction> actions) => actions?.Select(action => action.AsTask());
 
-        internal static async Task<IEnumerable<StorageFile>> GetAllFilesAsync(this StorageFolder folder)
+        public static async Task<IEnumerable<StorageFile>> GetAllFilesAsync(this StorageFolder folder)
         {
             IEnumerable<StorageFile> files = await folder.GetFilesAsync();
             IEnumerable<StorageFolder> folders = await folder.GetFoldersAsync();

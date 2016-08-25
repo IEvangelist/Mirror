@@ -7,7 +7,7 @@ namespace Mirror.Core
 {
     static class Do
     {
-        internal static async Task<T> WithRetry<T>(Func<Task<T>> action, int retryCount = 3)
+        public static async Task<T> WithRetry<T>(Func<Task<T>> action, int retryCount = 3)
         {
             int retries = 0;
             while (true)

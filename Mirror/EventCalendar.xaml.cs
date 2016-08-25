@@ -1,4 +1,5 @@
-﻿using Mirror.Extensions;
+﻿using Mirror.Core;
+using Mirror.Extensions;
 using Mirror.Networking;
 using System;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Mirror
 {
     public sealed partial class EventCalendar : UserControl
     {
+        ICalendarService _calendarService = Services.Get<ICalendarService>();
+
         public EventCalendar()
         {
             InitializeComponent();
@@ -20,13 +23,14 @@ namespace Mirror
 
         private async void OnLoaded(object sender, RoutedEventArgs args)
         {
-            var calendars = await CalendarClient.GetCalendarsAsync();
+            var calendars = await _calendarService.GetCalendarsAsync();
             if (calendars != null)
             {
                 var events =
                     calendars.SelectMany(calendar => calendar.Events)
                              .Where(e =>
                                     e.StartDateTime > DateTime.Now &&
+                                    !string.IsNullOrWhiteSpace(e.Summary) &&
                                     e.Summary.IndexOf("cancel", StringComparison.OrdinalIgnoreCase) == -1)
                              .OrderBy(e => e.StartDateTime)
                              .ToArray();

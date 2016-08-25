@@ -13,6 +13,7 @@ namespace Mirror
     public sealed partial class CurrentWeather : UserControl
     {
         DispatcherTimer _timer = new DispatcherTimer();
+        IWeatherService _weatherService = Services.Get<IWeatherService>();
 
         public CurrentWeather()
         {
@@ -48,7 +49,7 @@ namespace Mirror
         {
             SetInitialState();
 
-            var current = await WeatherClient.GetCurrentAsync();
+            var current = await _weatherService.GetCurrentAsync();
             if (current != null)
             {
                 try

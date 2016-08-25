@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace Mirror.Calendar
 {
-    class vEvent
+   public class vEvent
     {
-        internal List<Content> Contents { get; set; }
+        public List<Content> Contents { get; set; }
 
-        internal vEvent(string vevent)
+        public vEvent(string vevent)
         {
             Contents = new List<Content>();
             foreach (Match Content in Regex.Matches(vevent, @"(.*?:.*(\n\s.*)*)"))
@@ -18,10 +18,10 @@ namespace Mirror.Calendar
             }
         }
 
-        internal Content GetContent(string name) =>
+        public Content GetContent(string name) =>
             Contents.FirstOrDefault(x => x.Name.Equals(name));
 
-        internal string GetContentValueOrDefault(string name)
+        public string GetContentValueOrDefault(string name)
         {
             Content Content = Contents.FirstOrDefault(x => x.Name.Equals(name));
             return Content != null ? Content.ToString() : string.Empty;

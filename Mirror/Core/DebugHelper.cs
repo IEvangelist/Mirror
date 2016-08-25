@@ -8,7 +8,7 @@ namespace Mirror.Core
 {
     static class DebugHelper
     {
-        internal static bool IsNotHandled<T>(Exception ex) where T : class
+        public static bool IsNotHandled<T>(Exception ex) where T : class
         {
             bool isHandled = true;
 

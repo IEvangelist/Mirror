@@ -2,7 +2,7 @@
 
 namespace Mirror.Calendar
 {
-    internal enum Status
+    public enum Status
     {
         Tentative,
         Confirmed,

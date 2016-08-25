@@ -3,6 +3,7 @@
 using MetroLog;
 using Microsoft.ProjectOxford.Emotion;
 using Mirror.Core;
+using Mirror.Cortana;
 using Mirror.Emotion;
 using Mirror.Extensions;
 using Mirror.IO;
@@ -60,6 +61,9 @@ namespace Mirror
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
 
+        IPhotoService _photoService = Services.Get<IPhotoService>();
+        IVoiceService _voiceService = Services.Get<IVoiceService>();
+
         #endregion
 
         public MainPage()
@@ -69,26 +73,39 @@ namespace Mirror
         }
 
         async void OnLoaded(object sender, RoutedEventArgs e)
-        {   
+        {
             _messageLabel.Text = "Hello";
 
-            _logger.Error("Testing 1, 2, 3...");
+            _logger.Warn("Initializing Cortana...");
+            await _voiceService.IntializeCortanaAsync();
+            _logger.Warn("Cortana initialized...");
 
-            // Enusre that our face-tracker is initialized before invoking a change of the strem-state.
+            //// Enusre that our face-tracker is initialized before invoking a change of the strem-state.
             _faceTracker = await FaceTracker.CreateAsync();
 
-            _speechSynthesizer = new SpeechSynthesizer();
-            _speechSynthesizer.Voice =
-                SpeechSynthesizer.AllVoices
-                                 .FirstOrDefault(voice =>
-                                                 voice.Gender == VoiceGender.Female &&
-                                                 voice.Language.Contains("en-US"));
+            //_speechSynthesizer = new SpeechSynthesizer();
+            //_speechSynthesizer.Voice =
+            //    SpeechSynthesizer.AllVoices
+            //                     .FirstOrDefault(voice =>
+            //                                     voice.Gender == VoiceGender.Female &&
+            //                                     voice.Language.Contains("en-US"));
 
-            await Task.WhenAll(ChangeStreamStateAsync(true),
-                               InitializeSpeechRecognizerAsync());
+            //await Task.WhenAll(ChangeStreamStateAsync(true));,
+            //                   InitializeSpeechRecognizerAsync());
+
+            //var iPod = await Bluetooth.PairAsync();
+
+            //if (iPod != null)
+            //{
+            //    var device = await Bluetooth.FromIdAsync(iPod.Id);
+            //    if (device != null)
+            //    {
+
+            //    }
+            //}
         }
 
-        async void OnUnloaded(object sender, RoutedEventArgs e) => await Photos.CleanupAsync();
+        async void OnUnloaded(object sender, RoutedEventArgs e) => await _photoService.CleanupAsync();
 
         async Task InitializeSpeechRecognizerAsync()
         {
@@ -103,9 +120,9 @@ namespace Mirror
             }
 
             _speechRecognizer = new SpeechRecognizer();
-            _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;            
+            _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;
             _speechRecognizer.Constraints
-                             .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, 
+                             .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation,
                                                                        "dictation"));
 
             var result = await _speechRecognizer.CompileConstraintsAsync();
@@ -142,6 +159,8 @@ namespace Mirror
             {
                 _dictatedTextBuilder.Append(args.Result.Text + " ");
 
+                // args.Result.SemanticInterpretation.Properties
+
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     _hypothesis.Text = _dictatedTextBuilder.ToString();
@@ -150,10 +169,10 @@ namespace Mirror
         }
 
         async void OnSpeechRecognitionHypothesisGenerated(
-            SpeechRecognizer sender, 
+            SpeechRecognizer sender,
             SpeechRecognitionHypothesisGeneratedEventArgs args)
         {
-            string hypothesis = args.Hypothesis.Text;            
+            string hypothesis = args.Hypothesis.Text;
             string hypothesisText = $"{_dictatedTextBuilder} {hypothesis} ...";
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -167,17 +186,17 @@ namespace Mirror
             _isProcessing = true;
 
             RawEmotion[] result;
-            
+
             try
             {
-                var photoFile = await Photos.CreateAsync();
+                var photoFile = await _photoService.CreateAsync();
                 var imageProperties = ImageEncodingProperties.CreateBmp();
                 await _mediaManager.CapturePhotoToStorageFileAsync(imageProperties, photoFile);
                 result = await _emotionClient.RecognizeAsync(await photoFile.OpenStreamForReadAsync());
             }
             finally
             {
-                await Photos.CleanupAsync();
+                await _photoService.CleanupAsync();
                 _isProcessing = false;
             }
 
@@ -308,7 +327,7 @@ namespace Mirror
                         var emotions = await CaptureEmotionAsync();
                         if (emotions.IsNullOrEmpty() == false)
                         {
-                            var mostProbable = 
+                            var mostProbable =
                                 emotions.ToResults()
                                         .Where(result => result != Result.Empty)
                                         .FirstOrDefault();
@@ -345,7 +364,7 @@ namespace Mirror
         }
 
         async Task ReadMessageAsync(string message)
-        {            
+        {
             var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(message);
 
             _speaker.SetSource(stream, stream.ContentType);

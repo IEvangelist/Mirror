@@ -3,12 +3,12 @@
 
 namespace Mirror.Emotion
 {
-    class Result
+    public class Result
     {
-        internal static Result Empty => new Result();
+        public static Result Empty => new Result();
 
-        internal Emotions Emotion { get; private set; }
-        internal float Score { get; private set; }
+        public Emotions Emotion { get; private set; }
+        public float Score { get; private set; }
 
         Result() { }
 
@@ -18,6 +18,6 @@ namespace Mirror.Emotion
             Score = score;
         }
 
-        internal static Result FromScore(string emotion, float score) => new Result(emotion, score);
+        public static Result FromScore(string emotion, float score) => new Result(emotion, score);
     }
 }

@@ -4,20 +4,20 @@ using Windows.ApplicationModel.Resources;
 
 namespace Mirror.Core
 {
-    class Settings
+    public class Settings
     {
-        private static readonly Lazy<Settings> _settings = new Lazy<Settings>(() => new Settings());
+        static readonly Lazy<Settings> _settings = new Lazy<Settings>(() => new Settings());
 
-        internal static Settings Instance { get; } = _settings.Value;
+        public static Settings Instance { get; } = _settings.Value;
 
-        internal string AzureEmotionApiKey { get;  private set; }
-        internal string CalendarPassword { get; private set; }
-        internal string CalendarUsername { get; private set; }
-        internal string CentareCalendarUrl { get; private set; }
-        internal string City { get; private set; }
-        internal string JohnsonControlsCalendarUrl { get; private set; }
-        internal string OpenWeatherApiKey { get; private set; }
-        internal string WeatherUom { get; private set; }
+        public string AzureEmotionApiKey { get;  private set; }
+        public string CalendarPassword { get; private set; }
+        public string CalendarUsername { get; private set; }
+        public string CentareCalendarUrl { get; private set; }
+        public string City { get; private set; }
+        public string JohnsonControlsCalendarUrl { get; private set; }
+        public string OpenWeatherApiKey { get; private set; }
+        public string WeatherUom { get; private set; }
 
         Settings()
         {

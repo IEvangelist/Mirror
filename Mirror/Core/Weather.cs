@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Mirror.Core
 {
-    internal enum KnownIcons
+    public enum KnownIcons
     {
         SunRiseOrSet = 'A',
         Eclipse = 'D',
@@ -20,11 +20,11 @@ namespace Mirror.Core
     /// Weather icons represent character constants that map to the "Meteocons" font, http://www.alessioatzeni.com/meteocons/.
     /// The <see cref="Icons"/> dictionary maps http://openweathermap.org/weather-conditions to icons.
     /// </summary>
-    class Weather
+    public class Weather
     {
-        internal static Map Icons => new Map();
+        public static Map Icons => new Map();
 
-        internal class Map
+        public class Map
         {
             Dictionary<string, char> Lookup =>
                 new Dictionary<string, char>(StringComparer.OrdinalIgnoreCase)
@@ -41,7 +41,7 @@ namespace Mirror.Core
                     { "50d", 'J' }, { "50n", 'K' }
                 };
 
-            internal string this[string key] => Lookup[key].ToString();
+            public string this[string key] => Lookup[key].ToString();
         }
     }
 }

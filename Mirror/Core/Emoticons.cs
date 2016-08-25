@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Mirror.Core
 {
-    class Emoticons
+    public class Emoticons
     {
-        static Dictionary<Emotions, string[]> Map => 
+        static Dictionary<Emotions, string[]> Map =>
             new Dictionary<Emotions, string[]>
             {
                 [Emotions.Anger] = new[] { "Q", "R", "X", "y" },
@@ -23,6 +23,6 @@ namespace Mirror.Core
         /// <summary>
         /// Intended to function with the emoticons.ttf.
         /// </summary>
-        internal static string From(Emotions emotion) => Map[emotion].RandomElement();
+        public static string From(Emotions emotion) => Map[emotion].RandomElement();
     }
 }

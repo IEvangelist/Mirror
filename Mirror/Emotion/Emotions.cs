@@ -2,7 +2,7 @@
 
 namespace Mirror.Emotion
 {
-    enum Emotions
+    public enum Emotions
     {
         None,
         Anger,
@@ -15,9 +15,9 @@ namespace Mirror.Emotion
         Surprise
     };
 
-    internal static class EmotionMessages
+    public static class EmotionMessages
     {
-        internal static Dictionary<Emotions, IEnumerable<string>> Messages =
+        public static Dictionary<Emotions, IEnumerable<string>> Messages =
             new Dictionary<Emotions, IEnumerable<string>>
             {
                 [Emotions.Anger] = new[]

@@ -5,11 +5,11 @@ namespace Mirror.Models
 {
     public class Song
     {
-        internal string Artist { get; private set; }
+        public string Artist { get; private set; }
 
-        internal string Title { get; private set; }
+        public string Title { get; private set; }
 
-        internal Song(Tag tag)
+        public Song(Tag tag)
         {
             Artist = GetArtist(tag);
             Title = GetTitle(tag);

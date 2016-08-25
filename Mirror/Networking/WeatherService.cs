@@ -7,20 +7,28 @@ using static Mirror.Core.Settings;
 
 namespace Mirror.Networking
 {
-    class WeatherClient
+    public interface IWeatherService
+    {
+        Task<Current> GetCurrentAsync();
+
+        Task<Forecast> GetForecastAsync();
+    }
+
+    public class WeatherService : IWeatherService
     {
         const string BaseUrl = "http://api.openweathermap.org/data/2.5/";
 
-        internal static string CurrentUrl =>
+        static string CurrentUrl =>
             $"{BaseUrl}weather?zip={Instance.City}&cnt=5&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
 
-        internal static string ForecastUrl =>
+        static string ForecastUrl =>
             $"{BaseUrl}forecast/daily?zip={Instance.City}&cnt=6&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
-        internal static Task<Current> GetCurrentAsync() =>
+
+        Task<Current> IWeatherService.GetCurrentAsync() =>
             OnErrorContinueAsync(() =>
                 ApiClient.GetAsync<Current>(CurrentUrl));
 
-        internal static Task<Forecast> GetForecastAsync() =>
+        Task<Forecast> IWeatherService.GetForecastAsync() =>
             OnErrorContinueAsync(() =>
                 ApiClient.GetAsync<Forecast>(ForecastUrl));
 
@@ -30,7 +38,7 @@ namespace Mirror.Networking
             {
                 return await apiAsync();
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<WeatherClient>(ex))
+            catch (Exception ex) when (DebugHelper.IsNotHandled<WeatherService>(ex))
             {
                 return await Task.FromResult(default(T));
             }

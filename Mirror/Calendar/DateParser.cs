@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Mirror.Calendar
 {
-    class DateParser
+   public class DateParser
     {
         const string DateTimeExpression =
             "^((\\d{4})(\\d{2})(\\d{2}))T((\\d{2})(\\d{2})(\\d{2})(Z)?)$";
@@ -12,7 +12,7 @@ namespace Mirror.Calendar
         const string DateExpression =
             "^((\\d{4})(\\d{2})(\\d{2}))?$";
 
-        internal static DateTime? Parse(string text, TimeZoneInfo timeZone = null)
+        public static DateTime? Parse(string text, TimeZoneInfo timeZone = null)
         {
             var match = Regex.Match(text, DateTimeExpression, RegexOptions.IgnoreCase);
             if (!match.Success)

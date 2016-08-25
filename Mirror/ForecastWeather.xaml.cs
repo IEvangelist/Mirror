@@ -10,6 +10,7 @@ namespace Mirror
     public sealed partial class ForecastWeather : UserControl
     {
         DispatcherTimer _timer = new DispatcherTimer();
+        IWeatherService _weatherService = Services.Get<IWeatherService>();
 
         public ForecastWeather()
         {
@@ -33,7 +34,7 @@ namespace Mirror
         {
             _forecastGrid.Opacity = 0;
 
-            var forecast = await WeatherClient.GetForecastAsync();
+            var forecast = await _weatherService.GetForecastAsync();
             if (forecast != null && forecast.Cnt == 6)
             {
                 for (int index = 0; index < forecast.List.Count; ++index)

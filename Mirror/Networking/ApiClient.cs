@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mirror.Networking
 {
-    class ApiClient
+    public class ApiClient
     {
         static JsonSerializerSettings Settings => new JsonSerializerSettings()
         {
@@ -18,7 +18,7 @@ namespace Mirror.Networking
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-        internal static Task<T> GetAsync<T>(string url, Func<HttpClient> getClient = null) => 
+        public static Task<T> GetAsync<T>(string url, Func<HttpClient> getClient = null) => 
             Do.WithRetry(() => GetAsyncImpl<T>(url, getClient));
 
         static async Task<T> GetAsyncImpl<T>(string url, Func<HttpClient> getClient = null)
@@ -32,7 +32,7 @@ namespace Mirror.Networking
             return result;
         }
 
-        internal static async Task<string> GetRawAsync(string url, Func<HttpClient> getClient)
+        public static async Task<string> GetRawAsync(string url, Func<HttpClient> getClient)
         {
             Contract.Assert(url != null);
 

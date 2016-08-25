@@ -8,9 +8,14 @@ using static Windows.ApplicationModel.Package;
 
 namespace Mirror.IO
 {
-    class Audio
+    public interface IAudioService
     {
-        internal static async Task<IEnumerable<StorageFile>> LocalAudioFilesAsync()
+        Task<IEnumerable<StorageFile>> GetAudioFilesAsync();
+    }
+
+    public class AudioService : IAudioService
+    {
+        async Task<IEnumerable<StorageFile>> IAudioService.GetAudioFilesAsync()
         {
             var musicFolder = await Current.InstalledLocation.GetFolderAsync(@"Assets\Music");
             var files = await musicFolder.GetAllFilesAsync();

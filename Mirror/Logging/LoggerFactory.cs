@@ -3,7 +3,7 @@
 
 namespace Mirror.Logging
 {
-    class LoggerFactory
+    public class LoggerFactory
     {
         static LoggerFactory()
         {
@@ -11,8 +11,8 @@ namespace Mirror.Logging
                 LogManagerFactory.CreateLibraryDefaultSettings();
         }
 
-        internal static ILogger Get<T>() => LogManagerFactory.DefaultLogManager.GetLogger<T>();
+        public static ILogger Get<T>() => LogManagerFactory.DefaultLogManager.GetLogger<T>();
 
-        internal static ILoggerAsync GetAsynchronous<T>() => Get<T>() as ILoggerAsync;
+        public static ILoggerAsync GetAsynchronous<T>() => Get<T>() as ILoggerAsync;
     }
 }

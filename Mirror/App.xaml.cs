@@ -1,4 +1,5 @@
 ﻿using MetroLog;
+using Mirror.Core;
 using Mirror.IO;
 using Mirror.Logging;
 using System;
@@ -29,12 +30,12 @@ namespace Mirror
             UnhandledException += OnUnhandledException;
             
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-            GlobalCrashHandler.Configure();
+            GlobalCrashHandler.Configure();            
         }
 
         async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            await Photos.CleanupAsync();
+            await Services.Get<IPhotoService>()?.CleanupAsync();
 
             var logger = LoggerFactory.GetAsynchronous<App>();
             await logger?.FatalAsync(e.Message, e.Exception);

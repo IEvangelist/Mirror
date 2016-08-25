@@ -10,7 +10,7 @@ namespace Mirror.Extensions
 {
     static class EmotionExtensions
     {
-        internal static IEnumerable<Result> ToResults(this IEnumerable<RawEmotion> emotions)
+        public static IEnumerable<Result> ToResults(this IEnumerable<RawEmotion> emotions)
         {
             Contract.Assert(emotions != null);
 
@@ -20,7 +20,7 @@ namespace Mirror.Extensions
             }
         }
 
-        internal static Result ToMostProbable(this Scores scores)
+        public static Result ToMostProbable(this Scores scores)
         {
             Contract.Assert(scores != null);
 
@@ -33,7 +33,7 @@ namespace Mirror.Extensions
             return Result.FromScore(first.Key, first.Value);
         }
 
-        internal static List<Result> ToResults(this Scores scores)
+        public static List<Result> ToResults(this Scores scores)
         {
             Contract.Assert(scores != null);
 

@@ -7,7 +7,7 @@ namespace Mirror.Extensions
 {
     static class StringExtension
     {
-        internal static string ToTitleCase(this string str) => ToTitleCaseIpml(str);
+        public static string ToTitleCase(this string str) => ToTitleCaseIpml(str);
 
         static string ToTitleCaseIpml(string value)
         {
@@ -31,7 +31,7 @@ namespace Mirror.Extensions
             return result.ToString();
         }
 
-        internal static bool Contains(this string value, string search)
+        public static bool Contains(this string value, string search)
         {
             if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(search))
             {
@@ -41,10 +41,10 @@ namespace Mirror.Extensions
             return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1;
         }
 
-        internal static string NullIfEmpty(this string value) =>
+        public static string NullIfEmpty(this string value) =>
             string.IsNullOrWhiteSpace(value) ? null : value;        
 
-        internal static string Coalesce(this string root, params string[] others)
+        public static string Coalesce(this string root, params string[] others)
         {
             string value = root.NullIfEmpty();
             if (value != null) return value;

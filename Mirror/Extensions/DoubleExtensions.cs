@@ -9,13 +9,13 @@ namespace Mirror.Extensions
 
         static DateTime EpochDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
-        internal static string ToCardinal(this double degrees) =>
+        public static string ToCardinal(this double degrees) =>
             Caridnals[(int)Math.Round(degrees % 360 / 45)];
 
-        internal static DateTime FromUnixTimeStamp(this double unixTimeStamp) =>
+        public static DateTime FromUnixTimeStamp(this double unixTimeStamp) =>
             EpochDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
 
-        internal static string ToOrdinalString(this int number)
+        public static string ToOrdinalString(this int number)
         {
             if ((number % 100 > 10 && number % 100 < 20))
             {

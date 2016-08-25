@@ -5,12 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace Mirror.Calendar
 {
-    class Parser
+   public class Parser
     {
-        internal List<Content> Properties { get; set; }
-        internal List<vEvent> Events { get; set; }
+        public List<Content> Properties { get; set; }
+        public List<vEvent> Events { get; set; }
 
-        internal Parser(string icsFile)
+        public Parser(string icsFile)
         {
             Properties = new List<Content>();
             Events = new List<vEvent>();
@@ -24,10 +24,10 @@ namespace Mirror.Calendar
             }
         }
 
-        internal Content GetProperty(string name) =>
+        public Content GetProperty(string name) =>
             Properties.FirstOrDefault(x => x.Name.Equals(name));
 
-        internal static Calendar FromString(string icsBlob)
+        public static Calendar FromString(string icsBlob)
         {
             var parser = new Parser(icsBlob);
             return new Calendar(parser.Events.Select(e => Event.From(e)));

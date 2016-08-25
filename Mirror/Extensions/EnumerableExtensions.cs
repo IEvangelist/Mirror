@@ -9,9 +9,9 @@ namespace Mirror.Extensions
     {
         static Random Random => new Random((int)DateTime.Now.Ticks);
 
-        internal static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable) => enumerable == null || !enumerable.Any();
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable) => enumerable == null || !enumerable.Any();
 
-        internal static T RandomElement<T>(this IEnumerable<T> enumerable) =>
+        public static T RandomElement<T>(this IEnumerable<T> enumerable) =>
             enumerable.ElementAt(Random.Next(0, enumerable.Count()));
     }
 }

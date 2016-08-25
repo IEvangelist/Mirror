@@ -5,9 +5,9 @@ using System.ComponentModel;
 
 namespace Mirror.ViewModels
 {
-    class HudViewModel : INotifyPropertyChanged
+    public class HudViewModel : INotifyPropertyChanged
     {
-        Uri _connectivitySource = new Uri($"ms-appx:///Assets/wifi.png");
+        Uri _connectivitySource = new Uri($"ms-appx:///Assets/wifi-1.png");
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -21,7 +21,7 @@ namespace Mirror.ViewModels
             }
         }
 
-        internal HudViewModel()
+        public HudViewModel()
         {
             Internet.ConnectionChanged = OnConnectionChanged;
             Internet.Initialize();
