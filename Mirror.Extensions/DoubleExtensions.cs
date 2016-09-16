@@ -3,14 +3,19 @@
 
 namespace Mirror.Extensions
 {
-    static class DoubleExtensions
+    public static class DoubleExtensions
     {
         static string[] Caridnals = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+
+        static string[] VerboseCaridnals = { "North", "North East", "East", "South East", "South", "South West", "West", "North West", "North" };
 
         static DateTime EpochDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         public static string ToCardinal(this double degrees) =>
             Caridnals[(int)Math.Round(degrees % 360 / 45)];
+
+        public static string ToVerboseCardinal(this double degrees) =>
+            VerboseCaridnals[(int)Math.Round(degrees % 360 / 45)];
 
         public static DateTime FromUnixTimeStamp(this double unixTimeStamp) =>
             EpochDateTime.AddSeconds(unixTimeStamp).ToLocalTime();

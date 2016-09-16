@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Mirror.Cortana;
 using Mirror.IO;
 using Mirror.Networking;
+using Mirror.Speech;
 using System;
 
 namespace Mirror.Core
 {
     public static class Services
     {
-        private static Lazy<IServiceProvider> Container 
+        static Lazy<IServiceProvider> Container 
             => new Lazy<IServiceProvider>(
                 () => BuildAndConfigureServices());
 
@@ -21,7 +21,7 @@ namespace Mirror.Core
             collection.AddSingleton<IPhotoService, PhotoService>();
             collection.AddSingleton<IWeatherService, WeatherService>();
             collection.AddSingleton<ICalendarService, CalendarService>();
-            collection.AddSingleton<IVoiceService, VoiceService>();
+            collection.AddSingleton<ISpeechEngine, SpeechEngine>();
 
             return collection.BuildServiceProvider();
         }

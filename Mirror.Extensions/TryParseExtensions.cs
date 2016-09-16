@@ -3,7 +3,7 @@
 
 namespace Mirror.Extensions
 {
-    static class TryParseExtensions
+    public static class TryParseExtensions
     {
         public delegate bool ParseDelegate<T>(string value, out T result) where T : struct;
 

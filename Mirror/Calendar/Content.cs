@@ -1,4 +1,5 @@
 ﻿using Mirror.Core;
+using Mirror.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Mirror.Calendar
 {
-   public class Content
+    public class Content
     {
         public string Name { get; private set; }
         public string Value { get; private set; }
@@ -34,20 +35,25 @@ namespace Mirror.Calendar
             {
                 return Parameters[key].Contains(value);
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<Content>(ex))
+            catch (Exception ex) when (DebugHelper.IsHandled<Content>(ex))
             {
                 return false;
             }
         }
 
-        public override string ToString() =>
-            Regex.Replace(Value.Replace(Environment.NewLine + "\t", string.Empty)
-                 .Replace(Environment.NewLine + " ", "")
-                 .Replace("\n\r", Environment.NewLine)
-                 .Replace("\\n\\r", Environment.NewLine)
-                 .Replace("\n", Environment.NewLine)
-                 .Replace("\\n", Environment.NewLine)
-                 .Replace("\r", Environment.NewLine), @"\\(.)", "$1")
-                 .Trim();
+        public override string ToString()
+        {
+            var replaced =
+                Regex.Replace(
+                    Value.Replace(Environment.NewLine + "\t", string.Empty)
+                         .Replace(Environment.NewLine + " ", string.Empty)
+                         .Replace(Environment.NewLine + "	", string.Empty)
+                         .Replace(@"\n\r", Environment.NewLine)
+                         .Replace(@"\n", Environment.NewLine)
+                         .Replace(@"\r", Environment.NewLine), @"\\(.)", "$1")
+                         .Trim();
+
+            return Regex.Unescape(replaced);
+        }
     }
 }

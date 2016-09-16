@@ -20,9 +20,9 @@
     </UserControl.Resources>
     <StackPanel x:Name="_content">
         <StackPanel Orientation="Horizontal">
-            <TextBlock x:Name="_timeLabel" Text="12:12" VerticalAlignment="Top" FontSize="90" />
-            <TextBlock x:Name="_secondsLabel" Text="37" VerticalAlignment="Top" FontSize="28" Padding="6,15" Opacity="0.5" />
+            <TextBlock Text="{Binding HoursAndMinutes}" VerticalAlignment="Top" FontSize="90" />
+            <TextBlock Text="{Binding Seconds}" VerticalAlignment="Top" FontSize="28" Padding="6,15" Opacity="0.5" />
         </StackPanel>
-        <TextBlock x:Name="_dayAndDateLabel" VerticalAlignment="Top" Text="Wednesday, June 11"  FontSize="21" />
+        <TextBlock VerticalAlignment="Top" Text="{Binding Date}"  FontSize="21" />
     </StackPanel>
 </UserControl>

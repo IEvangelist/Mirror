@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace Mirror.Extensions
 {
-    static class AsyncExtensions
+    public static class AsyncExtensions
     {
         public static IEnumerable<Task> AsTasks(this IEnumerable<IAsyncAction> actions) => actions?.Select(action => action.AsTask());
 

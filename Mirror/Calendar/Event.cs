@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using static Mirror.Calendar.Status;
 
 
@@ -39,7 +40,7 @@ namespace Mirror.Calendar
                         result.TimeStamp = ParseDate(content);
                         break;
                     case "DESCRIPTION":
-                        result.Description = content.Value;
+                        result.Description = content.ToString();
                         break;
                     case "SUMMARY":
                         result.Summary = content.Value;

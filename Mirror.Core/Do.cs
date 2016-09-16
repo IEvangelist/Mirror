@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Mirror.Threading;
+using System;
 using System.Threading.Tasks;
 using static System.Threading.Tasks.Task;
 
 
 namespace Mirror.Core
 {
-    static class Do
+    public static class Do
     {
         public static async Task<T> WithRetry<T>(Func<Task<T>> action, int retryCount = 3)
         {
@@ -20,7 +21,7 @@ namespace Mirror.Core
                 {
                     // Ease up a bit...
                     await Delay(500).ConfigureAwait(false);
-                    throw;
+                    return await TaskCache<T>.Result;
                 }
             }
         }

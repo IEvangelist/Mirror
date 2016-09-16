@@ -1,15 +1,12 @@
 ﻿using Mirror.Networking;
 using System;
-using System.ComponentModel;
-
+using Windows.UI.Xaml;
 
 namespace Mirror.ViewModels
 {
-    public class HudViewModel : INotifyPropertyChanged
+    public class HudViewModel : BaseViewModel
     {
         Uri _connectivitySource = new Uri($"ms-appx:///Assets/wifi-1.png");
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public Uri ConnectivitySource
         {
@@ -17,11 +14,11 @@ namespace Mirror.ViewModels
             set
             {
                 _connectivitySource = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConnectivitySource)));
+                OnPropertyChanged(this, nameof(ConnectivitySource));
             }
         }
 
-        public HudViewModel()
+        public HudViewModel(DependencyObject dependency) : base(dependency)
         {
             Internet.ConnectionChanged = OnConnectionChanged;
             Internet.Initialize();
@@ -48,5 +45,7 @@ namespace Mirror.ViewModels
                     break;
             }
         }
+
+        public override string ToFormattedString(DateTime? dateContext) => _connectivitySource.ToString();
     }
 }

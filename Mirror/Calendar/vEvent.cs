@@ -12,20 +12,16 @@ namespace Mirror.Calendar
         public vEvent(string vevent)
         {
             Contents = new List<Content>();
-            foreach (Match Content in Regex.Matches(vevent, @"(.*?:.*(\n\s.*)*)"))
+            foreach (Match content in Regex.Matches(vevent, @"(.*?:.*(\n\s.*)*)"))
             {
-                Contents.Add(new Content(Content.Groups[1].Value));
+                Contents.Add(new Content(content.Groups[1].Value));
             }
         }
 
         public Content GetContent(string name) =>
             Contents.FirstOrDefault(x => x.Name.Equals(name));
 
-        public string GetContentValueOrDefault(string name)
-        {
-            Content Content = Contents.FirstOrDefault(x => x.Name.Equals(name));
-            return Content != null ? Content.ToString() : string.Empty;
-        }
-
+        public string GetContentValueOrDefault(string name) =>
+            GetContent(name)?.ToString() ?? string.Empty;
     }
 }

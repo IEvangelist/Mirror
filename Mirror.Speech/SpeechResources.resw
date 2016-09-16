@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HowDoesMyCalendarLook" xml:space="preserve">
+    <value>How does my calendar look?</value>
+  </data>
+  <data name="HowDoIFeel" xml:space="preserve">
+    <value>How do I feel?</value>
+  </data>
+  <data name="HowDoILook" xml:space="preserve">
+    <value>How do I look?</value>
+  </data>
+  <data name="LookAtMe" xml:space="preserve">
+    <value>Look at me</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="MuteIt" xml:space="preserve">
+    <value>Mute it</value>
+  </data>
+  <data name="MuteThis" xml:space="preserve">
+    <value>Mute this</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Play {0}</value>
+  </data>
+  <data name="PlayAnySong" xml:space="preserve">
+    <value>Play any song</value>
+  </data>
+  <data name="PlayASong" xml:space="preserve">
+    <value>Play a song</value>
+  </data>
+  <data name="PlayMusic" xml:space="preserve">
+    <value>Play music</value>
+  </data>
+  <data name="PlaySong" xml:space="preserve">
+    <value>Play song</value>
+  </data>
+  <data name="ReadMyCalendar" xml:space="preserve">
+    <value>Read my calendar</value>
+  </data>
+  <data name="ReadMyEvents" xml:space="preserve">
+    <value>Read my events</value>
+  </data>
+  <data name="ReadMyUpcomingCalendar" xml:space="preserve">
+    <value>Read my upcoming calendar</value>
+  </data>
+  <data name="ReadMyUpcomingEvents" xml:space="preserve">
+    <value>Read my upcoming events</value>
+  </data>
+  <data name="ReadTheCurrentWeather" xml:space="preserve">
+    <value>Read the current weather</value>
+  </data>
+  <data name="ReadTheForecast" xml:space="preserve">
+    <value>Read the forecast</value>
+  </data>
+  <data name="ReadTheTemp" xml:space="preserve">
+    <value>Read the temparature</value>
+  </data>
+  <data name="ReadTheWeather" xml:space="preserve">
+    <value>Read the weather</value>
+  </data>
+  <data name="TurnItDown" xml:space="preserve">
+    <value>Turn it down</value>
+  </data>
+  <data name="TurnItUp" xml:space="preserve">
+    <value>Turn it up</value>
+  </data>
+  <data name="TurnThisDown" xml:space="preserve">
+    <value>Turn this down</value>
+  </data>
+  <data name="TurnThisUp" xml:space="preserve">
+    <value>Turn this up</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="UnmuteIt" xml:space="preserve">
+    <value>Unmute it</value>
+  </data>
+  <data name="UnmuteThis" xml:space="preserve">
+    <value>Unmute this</value>
+  </data>
+  <data name="VolumeAtPercent" xml:space="preserve">
+    <value>Volume at {0} percent</value>
+  </data>
+  <data name="WhatAreMyEvents" xml:space="preserve">
+    <value>What are my events?</value>
+  </data>
+  <data name="WhatAreMyUpcomingEvents" xml:space="preserve">
+    <value>What are my upcoming events?</value>
+  </data>
+  <data name="WhatCanISay" xml:space="preserve">
+    <value>What can I say?</value>
+  </data>
+  <data name="WhatDoesMyCalendarLookLike" xml:space="preserve">
+    <value>What does my calendar look like?</value>
+  </data>
+  <data name="WhatIsTheCurrentWeather" xml:space="preserve">
+    <value>What is the current weather?</value>
+  </data>
+  <data name="WhatIsTheForecast" xml:space="preserve">
+    <value>What is the forecast?</value>
+  </data>
+  <data name="WhatIsTheTemp" xml:space="preserve">
+    <value>What is the temparature?</value>
+  </data>
+  <data name="WhatIsTheWeather" xml:space="preserve">
+    <value>What is the weather?</value>
+  </data>
+  <data name="HowDoesMyDayLook" xml:space="preserve">
+    <value>How does my {0} look?</value>
+  </data>
+  <data name="HowIsMyDayLooking" xml:space="preserve">
+    <value>How is my {0} looking?</value>
+  </data>
+  <data name="HowIsMyDayShapingUp" xml:space="preserve">
+    <value>How is my {0} shaping up?</value>
+  </data>
+  <data name="Louder" xml:space="preserve">
+    <value>Louder</value>
+  </data>
+  <data name="OnDayWhatIstheWeather" xml:space="preserve">
+    <value>On {0} what is the weather?</value>
+  </data>
+  <data name="OnDayWhatsTheWeather" xml:space="preserve">
+    <value>On {0} what's the weather?</value>
+  </data>
+  <data name="Quieter" xml:space="preserve">
+    <value>Quieter</value>
+  </data>
+  <data name="WhatIsTheWeatherOnDay" xml:space="preserve">
+    <value>What is the weather on {0}?</value>
+  </data>
+  <data name="WhatsMyCalendarOnDay" xml:space="preserve">
+    <value>What's my calendar on {0}?</value>
+  </data>
+  <data name="WhatsTheWeatherOnDay" xml:space="preserve">
+    <value>What's the weather on {0}?</value>
+  </data>
+</root>

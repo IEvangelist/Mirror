@@ -4,13 +4,20 @@ using Windows.UI.Xaml.Controls;
 using Mirror.Networking;
 using System;
 using System.Threading.Tasks;
+using Mirror.ViewModels;
+using Mirror.Speech;
+using Windows.ApplicationModel;
+using Mirror.Controls;
 
 namespace Mirror
 {
-    public sealed partial class ForecastWeather : UserControl
+    public sealed partial class ForecastWeather : UserControl, IContextSynthesizer
     {
-        DispatcherTimer _timer = new DispatcherTimer();
-        IWeatherService _weatherService = Services.Get<IWeatherService>();
+        DispatcherTimer _timer;
+        IWeatherService _weatherService;
+
+        string UnableToGenerateSpeechMessage { get; } =
+            "I'm sorry, but I'm having difficulity retrieving the forecast right now. Please, try again later.";
 
         public ForecastWeather()
         {
@@ -19,11 +26,16 @@ namespace Mirror
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
+            _weatherService = Services.Get<IWeatherService>();
+
             await LoadForecastAsync();
 
-            _timer.Stop();
-            _timer.Interval = TimeSpan.FromHours(1);
-            _timer.Tick -= OnTimerTick;
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromHours(1) };
             _timer.Tick += OnTimerTick;
             _timer.Start();
         }
@@ -32,50 +44,18 @@ namespace Mirror
 
         async Task LoadForecastAsync()
         {
-            _forecastGrid.Opacity = 0;
+            _forecastStackPanel.Opacity = 0;
 
             var forecast = await _weatherService.GetForecastAsync();
-            if (forecast != null && forecast.Cnt == 6)
-            {
-                for (int index = 0; index < forecast.List.Count; ++index)
-                {
-                    var value = forecast.List[index];
-                    var weather = value.Weather[0];
-                    switch (index)
-                    {
-                        case 1:
-                            UpdateControls(_oneDay, _oneIcon, _oneLow, _oneHigh, value, weather);
-                            break;
-                        case 2:
-                            UpdateControls(_twoDay, _twoIcon, _twoLow, _twoHigh, value, weather);
-                            break;
-                        case 3:
-                            UpdateControls(_threeDay, _threeIcon, _threeLow, _threeHigh, value, weather);
-                            break;
-                        case 4:
-                            UpdateControls(_fourDay, _fourIcon, _fourLow, _fourHigh, value, weather);
-                            break;
-                        case 5:
-                            UpdateControls(_fiveDay, _fiveIcon, _fiveLow, _fiveHigh, value, weather);
-                            break;
-                    }
-                }
+            DataContext = new ForecastViewModel(this, forecast);
 
-                _fadeIn.Begin();
-            }
+            _fadeIn.Begin();
         }
 
-        void UpdateControls(TextBlock day, 
-                            TextBlock icon, 
-                            TextBlock low, 
-                            TextBlock high, 
-                            Models.List value, 
-                            Models.Weather weather)
-        {
-            day.Text = $"{value.DateTime:ddd}";
-            icon.Text = Weather.Icons[weather.Icon];
-            low.Text = $"L {value.Temp.Min:#}°";
-            high.Text = $"H {value.Temp.Max:#}°";
-        }
+        Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)
+            => SpeechControlHelper.GetContextualMessageAsync(this,
+                                                             DataContext,
+                                                             dateContext,
+                                                             UnableToGenerateSpeechMessage);
     }
 }

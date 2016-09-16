@@ -3,18 +3,19 @@
 using MetroLog;
 using Microsoft.ProjectOxford.Emotion;
 using Mirror.Core;
-using Mirror.Cortana;
 using Mirror.Emotion;
 using Mirror.Extensions;
+using Mirror.Interfaces;
 using Mirror.IO;
 using Mirror.Logging;
 using Mirror.Models;
+using Mirror.Speech;
+using Mirror.Threading;
 using Mirror.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
@@ -25,14 +26,11 @@ using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
-using Windows.Media.SpeechRecognition;
-using Windows.Media.SpeechSynthesis;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 using RawEmotion = Microsoft.ProjectOxford.Emotion.Contract.Emotion;
 
@@ -44,53 +42,44 @@ namespace Mirror
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, IContextSynthesizer
     {
         #region Field(s)
 
         bool _isStreaming;
         bool _isProcessing;
+        int _captureCounter;
+        const int MaxCaptureBeforeReset = 3;
         ILogger _logger = LoggerFactory.Get<MainPage>();
         FaceTracker _faceTracker;
-        SpeechRecognizer _speechRecognizer;
-        SpeechSynthesizer _speechSynthesizer;
-        DispatcherTimer _frameProcessingTimer;
         VideoEncodingProperties _videoProperties;
-        StringBuilder _dictatedTextBuilder = new StringBuilder();
+        DispatcherTimer _frameProcessingTimer;
         SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
 
+        ISpeechEngine _speechEngine = Services.Get<ISpeechEngine>();
         IPhotoService _photoService = Services.Get<IPhotoService>();
-        IVoiceService _voiceService = Services.Get<IVoiceService>();
 
         #endregion
 
         public MainPage()
         {
             InitializeComponent();
-            DataContext = new HudViewModel();
+            DataContext = new HudViewModel(this);
         }
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _messageLabel.Text = "Hello";
-
-            _logger.Warn("Initializing Cortana...");
-            await _voiceService.IntializeCortanaAsync();
-            _logger.Warn("Cortana initialized...");
-
-            //// Enusre that our face-tracker is initialized before invoking a change of the strem-state.
+            
             _faceTracker = await FaceTracker.CreateAsync();
 
-            //_speechSynthesizer = new SpeechSynthesizer();
-            //_speechSynthesizer.Voice =
-            //    SpeechSynthesizer.AllVoices
-            //                     .FirstOrDefault(voice =>
-            //                                     voice.Gender == VoiceGender.Female &&
-            //                                     voice.Language.Contains("en-US"));
+            _speechEngine.PhraseRecognized += OnspeechEnginePhraseRecognized;
+            _speechEngine.StateChanged += OnSpeechEngineStateChanged;
 
-            //await Task.WhenAll(ChangeStreamStateAsync(true));,
+            await _speechEngine.StartContinuousRecognitionAsync();
+            //await Task.WhenAll(//ChangeStreamStateAsync(true));,
             //                   InitializeSpeechRecognizerAsync());
 
             //var iPod = await Bluetooth.PairAsync();
@@ -105,81 +94,49 @@ namespace Mirror
             //}
         }
 
+        async void OnSpeechEngineStateChanged(object sender, StateChangedEventArgs e)
+            => await this.ThreadSafeAsync(() => _hypothesis.Text = e.ToString());
+
+        async void OnspeechEnginePhraseRecognized(object sender, PhraseRecognizedEventArgs e)
+        {
+            IContextSynthesizer synthesizer = null;
+            switch (e.CommandContext.Command)
+            {
+                case Command.CurrentWeather:
+                    synthesizer = _currentWeahther;
+                    break;
+                case Command.ForecastWeather:
+                    synthesizer = _forecastWeather;
+                    break;
+                case Command.CalendarEvents:
+                    synthesizer = _eventCalendar;
+                    break;
+                case Command.Audio:
+                    IAudioCommandListener audioListener = _audioPlayer;
+                    await audioListener.PlayRandomSongAsync();
+                    break;
+                case Command.Volume:
+                    IVolumeCommandListener volumeListener = _audioPlayer;
+                    await volumeListener.SetVolumeAsync(e.PhraseText);
+                    break;
+                case Command.Emotion:
+                    await this.ThreadSafeAsync(async () => await ChangeStreamStateAsync(true));
+                    break;
+                case Command.Help:
+                    synthesizer = this;
+                    break;
+            }
+
+            if (synthesizer != null)
+            {
+                await this.ThreadSafeAsync(
+                    async () => 
+                        await _speechEngine.SpeakAsync(
+                            await synthesizer.GetContextualMessageAsync(e.CommandContext.DateContext), _speaker));                
+            }
+        }
+
         async void OnUnloaded(object sender, RoutedEventArgs e) => await _photoService.CleanupAsync();
-
-        async Task InitializeSpeechRecognizerAsync()
-        {
-            if (_speechRecognizer != null)
-            {
-                _speechRecognizer.StateChanged -= OnSpeechRecognizerStateChanged;
-                _speechRecognizer.ContinuousRecognitionSession.Completed -= OnContinuousRecognitionSessionCompleted;
-                _speechRecognizer.ContinuousRecognitionSession.ResultGenerated -= OnContinuousRecognitionSessionResultGenerated;
-                _speechRecognizer.HypothesisGenerated -= OnSpeechRecognitionHypothesisGenerated;
-                _speechRecognizer.Dispose();
-                _speechRecognizer = null;
-            }
-
-            _speechRecognizer = new SpeechRecognizer();
-            _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;
-            _speechRecognizer.Constraints
-                             .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation,
-                                                                       "dictation"));
-
-            var result = await _speechRecognizer.CompileConstraintsAsync();
-
-            _speechRecognizer.ContinuousRecognitionSession.Completed += OnContinuousRecognitionSessionCompleted;
-            _speechRecognizer.ContinuousRecognitionSession.ResultGenerated += OnContinuousRecognitionSessionResultGenerated;
-            _speechRecognizer.HypothesisGenerated += OnSpeechRecognitionHypothesisGenerated;
-
-            await _speechRecognizer.ContinuousRecognitionSession.StartAsync();
-        }
-
-        void OnSpeechRecognizerStateChanged(
-            SpeechRecognizer sender,
-            SpeechRecognizerStateChangedEventArgs args)
-        {
-            _logger.Info($"SpeechRecognizer.State = {args.State}");
-        }
-
-        async void OnContinuousRecognitionSessionCompleted(
-            SpeechContinuousRecognitionSession sender,
-            SpeechContinuousRecognitionCompletedEventArgs args)
-        {
-            await InitializeSpeechRecognizerAsync();
-        }
-
-        async void OnContinuousRecognitionSessionResultGenerated(
-            SpeechContinuousRecognitionSession sender,
-            SpeechContinuousRecognitionResultGeneratedEventArgs args)
-        {
-            // We may choose to discard content that has low confidence, as that could indicate that we're picking up
-            // noise via the microphone, or someone could be talking out of earshot.
-            if (args.Result.Confidence == SpeechRecognitionConfidence.Medium ||
-                args.Result.Confidence == SpeechRecognitionConfidence.High)
-            {
-                _dictatedTextBuilder.Append(args.Result.Text + " ");
-
-                // args.Result.SemanticInterpretation.Properties
-
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    _hypothesis.Text = _dictatedTextBuilder.ToString();
-                });
-            }
-        }
-
-        async void OnSpeechRecognitionHypothesisGenerated(
-            SpeechRecognizer sender,
-            SpeechRecognitionHypothesisGeneratedEventArgs args)
-        {
-            string hypothesis = args.Hypothesis.Text;
-            string hypothesisText = $"{_dictatedTextBuilder} {hypothesis} ...";
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                _hypothesis.Text = hypothesisText;
-            });
-        }
 
         async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
         {
@@ -263,7 +220,7 @@ namespace Mirror
                 _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
                 _frameProcessingTimer.Start();
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
+            catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
             {
                 successful = false;
             }
@@ -281,7 +238,7 @@ namespace Mirror
                 {
                     await _mediaManager.StopPreviewAsync();
                 }
-                catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
+                catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
                 {
                     // Since we're going to destroy the MediaCapture object there's nothing to do here
                 }
@@ -348,13 +305,19 @@ namespace Mirror
                                     message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
                                 }
                                 _messageLabel.Text = message;
-                                await ReadMessageAsync(message);
+                                await _speechEngine.SpeakAsync(message, _speaker);
+
+                                ++ _captureCounter;
+                                if (_captureCounter >= MaxCaptureBeforeReset)
+                                {
+                                    await ChangeStreamStateAsync(false);
+                                }
                             }
                         }
                     });
                 }
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<MainPage>(ex))
+            catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
             {
             }
             finally
@@ -363,25 +326,17 @@ namespace Mirror
             }
         }
 
-        async Task ReadMessageAsync(string message)
-        {
-            var stream = await _speechSynthesizer.SynthesizeTextToStreamAsync(message);
-
-            _speaker.SetSource(stream, stream.ContentType);
-            _speaker.Play();
-        }
-
         void SetupVisualization(Size framePixelSize, IList<DetectedFace> foundFaces)
         {
             _visualizationCanvas.Children.Clear();
 
-            double actualWidth = _visualizationCanvas.ActualWidth;
-            double actualHeight = _visualizationCanvas.ActualHeight;
+            var actualWidth = _visualizationCanvas.ActualWidth;
+            var actualHeight = _visualizationCanvas.ActualHeight;
 
             if (_isStreaming && !foundFaces.IsNullOrEmpty() && actualWidth != 0 && actualHeight != 0)
             {
-                double widthScale = framePixelSize.Width / actualWidth;
-                double heightScale = framePixelSize.Height / actualHeight;
+                var widthScale = framePixelSize.Width / actualWidth;
+                var heightScale = framePixelSize.Height / actualHeight;
 
                 var face = GetClosestFace(foundFaces);
                 if (face != null)
@@ -437,18 +392,18 @@ namespace Mirror
         /// <summary>
         /// Handles MediaCapture stream failures by shutting down streaming and returning to Idle state.
         /// </summary>
-        /// <param name="sender">The source of the event, i.e. our MediaCapture object</param>
-        /// <param name="args">Event data</param>
-        void OnCameraStreamFailed(MediaCapture sender, object args)
-        {
-            // MediaCapture is not Agile and so we cannot invoke its methods on this caller's thread
-            // and instead need to schedule the state change on the UI thread.
-            var ignored = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                await ChangeStreamStateAsync(false);
-            });
-        }
+        async void OnCameraStreamFailed(MediaCapture sender, object args)
+            => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                async () =>
+                    await ChangeStreamStateAsync(false));
 
-        void OnTrackedChanged(object sender, Song song) => _songDetails.Text = song.ToString();
+        async Task OnTrackedChanged(object sender, Song song) 
+            => await this.ThreadSafeAsync(() => _songDetails.Text = song.ToString());
+
+        Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)
+            => Task.FromResult("You can say things like, \"what's the weather\", \"read the forecast\", or \"what is the temparature\". " + 
+                               "Or you could ask \"what's my calendar look like\" or \"what are my upcoming events\". " + 
+                               "For music, you can say \"play a song\", \"turn this up\", and other common commands like, \"mute\", etc. " +
+                               "Finally, you can ask \"how do I look\"!");
     }
 }

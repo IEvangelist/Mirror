@@ -1,12 +1,13 @@
-﻿using Mirror.Core;
-using System;
+﻿using System;
 using System.Text;
-
+using System.Text.RegularExpressions;
 
 namespace Mirror.Extensions
 {
-    static class StringExtension
+    public static class StringExtensions
     {
+        static char[] EscapeSequences = new char[] { ' ', '\n', '\t', '\r', '\f', '\v', '\\' };
+
         public static string ToTitleCase(this string str) => ToTitleCaseIpml(str);
 
         static string ToTitleCaseIpml(string value)
@@ -31,7 +32,7 @@ namespace Mirror.Extensions
             return result.ToString();
         }
 
-        public static bool Contains(this string value, string search)
+        public static bool ContainsIgnoringCase(this string value, string search)
         {
             if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(search))
             {
@@ -57,5 +58,10 @@ namespace Mirror.Extensions
 
             return string.Empty;
         }
+
+        public static string SplitCamelCase(this string value)
+            => Regex.Replace(value, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
+
+        public static T ToEnum<T>(this string value) => (T)Enum.Parse(typeof(T), value);
     }
 }

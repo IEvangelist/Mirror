@@ -6,9 +6,9 @@ using System.Diagnostics;
 
 namespace Mirror.Core
 {
-    static class DebugHelper
+    public static class DebugHelper
     {
-        public static bool IsNotHandled<T>(Exception ex) where T : class
+        public static bool IsHandled<T>(Exception ex) where T : class
         {
             bool isHandled = true;
 
@@ -24,7 +24,7 @@ namespace Mirror.Core
                 isHandled = false;
             }
 
-            return isHandled == false;
+            return isHandled;
         }
     }
 }

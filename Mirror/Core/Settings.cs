@@ -6,6 +6,7 @@ namespace Mirror.Core
 {
     public class Settings
     {
+        const string Configuration = nameof(Configuration);
         static readonly Lazy<Settings> _settings = new Lazy<Settings>(() => new Settings());
 
         public static Settings Instance { get; } = _settings.Value;
@@ -21,7 +22,7 @@ namespace Mirror.Core
 
         Settings()
         {
-            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Configuration");
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse(Configuration);
             AzureEmotionApiKey = resourceLoader.GetString(nameof(AzureEmotionApiKey));
             CalendarPassword = resourceLoader.GetString(nameof(CalendarPassword));
             CalendarUsername = resourceLoader.GetString(nameof(CalendarUsername));

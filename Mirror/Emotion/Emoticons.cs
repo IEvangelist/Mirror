@@ -1,9 +1,8 @@
-﻿using Mirror.Emotion;
-using Mirror.Extensions;
+﻿using Mirror.Extensions;
 using System.Collections.Generic;
 
 
-namespace Mirror.Core
+namespace Mirror.Emotion
 {
     public class Emoticons
     {

@@ -1,77 +1,79 @@
-﻿using Mirror.Core;
+﻿using Mirror.Controls;
+using Mirror.Core;
 using Mirror.Extensions;
 using Mirror.Networking;
+using Mirror.Speech;
+using Mirror.ViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.Core;
+using Windows.ApplicationModel;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using static Mirror.Calendar.Calendar;
 
 
 namespace Mirror
 {
-    public sealed partial class EventCalendar : UserControl
+    public sealed partial class EventCalendar : UserControl, IContextSynthesizer
     {
-        ICalendarService _calendarService = Services.Get<ICalendarService>();
+        DispatcherTimer _timer;
+        ICalendarService _calendarService;
+
+        string UnableToGenerateSpeechMessage { get; } =
+            "I'm sorry, but I'm having difficulity retrieving your calendar events right now. Please, try again later.";
 
         public EventCalendar()
         {
             InitializeComponent();
         }
 
+        Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)
+            => SpeechControlHelper.GetContextualMessageAsync(this,
+                                                             DataContext,
+                                                             dateContext,
+                                                             UnableToGenerateSpeechMessage);
+
         private async void OnLoaded(object sender, RoutedEventArgs args)
         {
-            var calendars = await _calendarService.GetCalendarsAsync();
-            if (calendars != null)
+            if (DesignMode.DesignModeEnabled)
             {
+                return;
+            }
+
+            _calendarService = Services.Get<ICalendarService>();
+
+            await LoadCalendarEventsAsync();
+
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromHours(1) };
+            _timer.Tick += OnTimerTick;
+            _timer.Start();
+        }
+
+        async void OnTimerTick(object sender, object e) => await LoadCalendarEventsAsync();
+
+        async Task LoadCalendarEventsAsync()
+        {
+            var calendars = await _calendarService.GetCalendarsAsync();
+            if (!calendars.IsNullOrEmpty() && calendars.All(calendar => calendar != Empty))
+            {
+                var view = ApplicationView.GetForCurrentView();
+                var take = view.Orientation == ApplicationViewOrientation.Portrait ? 7 : 5;
+
                 var events =
-                    calendars.SelectMany(calendar => calendar.Events)
+                    calendars.SelectMany(calendar => calendar?.Events)
                              .Where(e =>
                                     e.StartDateTime > DateTime.Now &&
                                     !string.IsNullOrWhiteSpace(e.Summary) &&
                                     e.Summary.IndexOf("cancel", StringComparison.OrdinalIgnoreCase) == -1)
                              .OrderBy(e => e.StartDateTime)
+                             .Take(take)
                              .ToArray();
 
-                if (events != null)
+                if (!events.IsNullOrEmpty())
                 {
-                    for (int index = 0; index < events.Length; ++ index)
-                    {
-                        switch (index)
-                        {
-                            case 0:
-                                await UpdateEventDetailsAsync(_eventDayOne, _eventTimeOne, _eventTitleOne, events[index]);
-                                break;
-                            case 1:
-                                await UpdateEventDetailsAsync(_eventDayTwo, _eventTimeTwo, _eventTitleTwo, events[index]);
-                                break;
-                            case 2:
-                                await UpdateEventDetailsAsync(_eventDayThree, _eventTimeThree, _eventTitleThree, events[index]);
-                                break;
-                            case 3:
-                                await UpdateEventDetailsAsync(_eventDayFour, _eventTimeFour, _eventTitleFour, events[index]);
-                                break;
-                            case 4:
-                                await UpdateEventDetailsAsync(_eventDayFive, _eventTimeFive, _eventTitleFive, events[index]);
-                                break;
-                            case 5:
-                                await UpdateEventDetailsAsync(_eventDaySix, _eventTimeSix, _eventTitleSix, events[index]);
-                                break;
-                            case 6:
-                                await UpdateEventDetailsAsync(_eventDaySeven, _eventTimeSeven, _eventTitleSeven, events[index]);
-                                break;
-                        }
-                    }
-
-                    var view = ApplicationView.GetForCurrentView();
-                    _sixthBorder.Visibility =
-                        _seventhBorder.Visibility =
-                            view.Orientation == ApplicationViewOrientation.Portrait
-                                ? Visibility.Visible
-                                : Visibility.Collapsed;
-
+                    DataContext = new CalendarViewModel(this, events);
                     _fadeIn.Begin();
                 }
                 else
@@ -79,22 +81,6 @@ namespace Mirror
                     Visibility = Visibility.Collapsed;
                 }
             }
-        }
-
-        async Task UpdateEventDetailsAsync(TextBlock day, 
-                                           TextBlock hours, 
-                                           TextBlock title, 
-                                           Calendar.Event e)
-        {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                var startDate = e.StartDateTime.GetValueOrDefault();
-                var endDate = e.EndDateTime.GetValueOrDefault();
-
-                day.Text = $"{startDate:ddd}, {startDate:MMM} {startDate.Day.ToOrdinalString()}";
-                hours.Text = $"{startDate:h:mm}-{endDate:h:mm tt}";
-                title.Text = e.Summary;
-            });
         }
     }
 }

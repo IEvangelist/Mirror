@@ -1,5 +1,6 @@
 ﻿using Mirror.Core;
 using Mirror.Models;
+using Mirror.Threading;
 using System;
 using System.Threading.Tasks;
 using static Mirror.Core.Settings;
@@ -19,10 +20,10 @@ namespace Mirror.Networking
         const string BaseUrl = "http://api.openweathermap.org/data/2.5/";
 
         static string CurrentUrl =>
-            $"{BaseUrl}weather?zip={Instance.City}&cnt=5&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
+            $"{BaseUrl}weather?q={Instance.City}&cnt=5&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
 
         static string ForecastUrl =>
-            $"{BaseUrl}forecast/daily?zip={Instance.City}&cnt=6&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
+            $"{BaseUrl}forecast/daily?q={Instance.City}&cnt=7&appid={Instance.OpenWeatherApiKey}&units={Instance.WeatherUom}&mode=json";
 
         Task<Current> IWeatherService.GetCurrentAsync() =>
             OnErrorContinueAsync(() =>
@@ -38,9 +39,9 @@ namespace Mirror.Networking
             {
                 return await apiAsync();
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<WeatherService>(ex))
+            catch (Exception ex) when (DebugHelper.IsHandled<WeatherService>(ex))
             {
-                return await Task.FromResult(default(T));
+                return await TaskCache<T>.Result;
             }
         }
     }

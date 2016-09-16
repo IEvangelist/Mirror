@@ -154,13 +154,10 @@
     <Compile Include="Calendar\TimeZoneParser.cs" />
     <Compile Include="Calendar\vEvent.cs" />
     <Compile Include="Calendar\Parser.cs" />
-    <Compile Include="Core\DebugHelper.cs" />
-    <Compile Include="Core\Emoticons.cs" />
+    <Compile Include="Controls\SpeechControlHelper.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Core\Services.cs" />
-    <Compile Include="Cortana\EmotionVoiceCommandService.cs" />
-    <Compile Include="Cortana\VoiceService.cs" />
-    <Compile Include="Extensions\AsyncExtensions.cs" />
-    <Compile Include="Extensions\TryParseExtensions.cs" />
+    <Compile Include="Emotion\Emoticons.cs" />
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Weather.cs" />
     <Compile Include="CurrentWeather.xaml.cs">
@@ -171,18 +168,12 @@
     <Compile Include="EventCalendar.xaml.cs">
       <DependentUpon>EventCalendar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\EmotionExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\DoubleExtensions.cs" />
-    <Compile Include="Extensions\PageExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ForecastWeather.xaml.cs">
       <DependentUpon>ForecastWeather.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\AudioService.cs" />
     <Compile Include="IO\BluetoothService.cs" />
     <Compile Include="IO\PhotoService.cs" />
-    <Compile Include="Logging\LoggerFactory.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -194,10 +185,14 @@
     <Compile Include="Networking\Internet.cs" />
     <Compile Include="Networking\WeatherService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Do.cs" />
     <Compile Include="SystemClock.xaml.cs">
       <DependentUpon>SystemClock.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\ClockViewModel.cs" />
+    <Compile Include="ViewModels\CurrentWeatherViewModel.cs" />
+    <Compile Include="ViewModels\CalendarViewModel.cs" />
+    <Compile Include="ViewModels\ForecastViewModel.cs" />
     <Compile Include="ViewModels\HudViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -303,10 +298,6 @@
     <Content Include="Assets\Square71x71Logo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\VoiceCommands.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Assets\Wide310x150Logo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -390,7 +381,18 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Speech\" />
+    <ProjectReference Include="..\Mirror.Core\Mirror.Core.csproj">
+      <Project>{2d83abd7-baab-4922-bc19-fe5cb4e933c3}</Project>
+      <Name>Mirror.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mirror.Extensions\Mirror.Extensions.csproj">
+      <Project>{6c2c928e-64fd-4c67-8e70-f968ff6b0d63}</Project>
+      <Name>Mirror.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mirror.Speech\Mirror.Speech.csproj">
+      <Project>{98b38efe-0271-4071-afa5-205e7677ffdd}</Project>
+      <Name>Mirror.Speech</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

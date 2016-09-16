@@ -1,23 +1,29 @@
-﻿using Mirror.Core;
+﻿using Mirror.Controls;
+using Mirror.Core;
 using Mirror.Extensions;
 using Mirror.Networking;
+using Mirror.Speech;
+using Mirror.ViewModels;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 
 namespace Mirror
 {
-    public sealed partial class CurrentWeather : UserControl
+    public sealed partial class CurrentWeather : UserControl, IContextSynthesizer
     {
-        DispatcherTimer _timer = new DispatcherTimer();
-        IWeatherService _weatherService = Services.Get<IWeatherService>();
+        DispatcherTimer _timer;
+        IWeatherService _weatherService;
+
+        string UnableToGenerateSpeechMessage { get; } = 
+            "I'm sorry, but I'm having difficulity retrieving the current weather right now. Please, try again later.";
 
         public CurrentWeather()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         void SetInitialState()
@@ -34,11 +40,16 @@ namespace Mirror
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
+            _weatherService = Services.Get<IWeatherService>();
+
             await LoadWeatherAsync();
 
-            _timer.Stop();
-            _timer.Interval = TimeSpan.FromHours(1);
-            _timer.Tick -= OnTimerTick;
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(15) };
             _timer.Tick += OnTimerTick;
             _timer.Start();
         }
@@ -49,42 +60,19 @@ namespace Mirror
         {
             SetInitialState();
 
-            var current = await _weatherService.GetCurrentAsync();
-            if (current != null)
+            var currentWeather = await _weatherService.GetCurrentAsync();
+            if (currentWeather != null)
             {
-                try
-                {
-                    _temperatureLabel.Text = $"{current.Main.Temp:#}°";
-                    _lowTempLabel.Text = $"L {current.Main.TempMin:#}°";
-                    _highTempLabel.Text = $"H {current.Main.TempMax:#}°";
-                    _windLabel.Text = $"{current.Wind.Speed:#} {current.Wind.Deg.ToCardinal()}";
-
-                    DateTime sunrise = current.Sys.SunriseDateTime,
-                             sunset = current.Sys.SunsetDateTime;
-
-                    if (DateTime.Now > sunset)
-                    {
-                        _sunRiseOrSetLabel.Text = $"{sunrise:h:mm tt}";
-                    }
-                    else
-                    {
-                        _sunRiseOrSetLabel.Text = $"{sunset:h:mm tt}";
-                    }
-
-                    var weather = current.Weather.FirstOrDefault();
-                    if (weather != null)
-                    {
-                        _conditionLabel.Text = weather.Description.ToTitleCase();
-                        _locationLabel.Text = current.Name;
-                        _weatherIcon.Text = Weather.Icons[weather.Icon];
-                    }
-                }
-                finally
-                {
-                    ToggleContentVisibility(true);
-                    _fadeIn.Begin();
-                }
+                DataContext = new CurrentWeatherViewModel(this, currentWeather);
+                ToggleContentVisibility(true);
+                _fadeIn.Begin();
             }
         }
+
+        Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext) 
+            => SpeechControlHelper.GetContextualMessageAsync(this, 
+                                                             DataContext, 
+                                                             dateContext, 
+                                                             UnableToGenerateSpeechMessage);
     }
 }

@@ -21,56 +21,21 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
-
-    <StackPanel x:Name="_eventContainer" Orientation="Vertical" Opacity="0" Width="300">
-        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDayOne" FontSize="22" />
-                <TextBlock x:Name="_eventTimeOne" FontSize="16" />
-                <TextBlock x:Name="_eventTitleOne" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDayTwo" FontSize="22" />
-                <TextBlock x:Name="_eventTimeTwo" FontSize="16" />
-                <TextBlock x:Name="_eventTitleTwo" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDayThree" FontSize="22" />
-                <TextBlock x:Name="_eventTimeThree" FontSize="16" />
-                <TextBlock x:Name="_eventTitleThree" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDayFour" FontSize="22" />
-                <TextBlock x:Name="_eventTimeFour" FontSize="16" />
-                <TextBlock x:Name="_eventTitleFour" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDayFive" FontSize="22" />
-                <TextBlock x:Name="_eventTimeFive" FontSize="16" />
-                <TextBlock x:Name="_eventTitleFive" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border x:Name="_sixthBorder" BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDaySix" FontSize="22" />
-                <TextBlock x:Name="_eventTimeSix" FontSize="16" />
-                <TextBlock x:Name="_eventTitleSix" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
-        <Border x:Name="_seventhBorder" BorderThickness="2" BorderBrush="{StaticResource Fade}" CornerRadius="6" Margin="0, 6">
-            <StackPanel Orientation="Vertical" Padding="12">
-                <TextBlock x:Name="_eventDaySeven" FontSize="22" />
-                <TextBlock x:Name="_eventTimeSeven" FontSize="16" />
-                <TextBlock x:Name="_eventTitleSeven" FontSize="18" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-        </Border>
+    <StackPanel x:Name="_eventContainer" Orientation="Vertical" HorizontalAlignment="Left" Opacity="0" Width="300">
+        <Grid HorizontalAlignment="Left">
+            <GridView ItemsSource="{Binding Events}" HorizontalAlignment="Left">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" HorizontalAlignment="Left" MinWidth="290" CornerRadius="6" Margin="0, 6">
+                            <StackPanel Orientation="Vertical" Padding="12" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding Day}" FontSize="22" />
+                                <TextBlock Text="{Binding Hours}" FontSize="16" />
+                                <TextBlock Text="{Binding Title}" FontSize="18" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
     </StackPanel>
 </UserControl>

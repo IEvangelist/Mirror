@@ -2,7 +2,6 @@
 using Mirror.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,8 +26,8 @@ namespace Mirror.Networking
                                  () => new HttpClient(
                                            new HttpClientHandler
                                            {
-                                               Credentials = 
-                                                   new NetworkCredential(settings.CalendarUsername, 
+                                               Credentials =
+                                                   new NetworkCredential(settings.CalendarUsername,
                                                                          settings.CalendarPassword)
                                            }));
 
@@ -43,14 +42,10 @@ namespace Mirror.Networking
                 if (!string.IsNullOrWhiteSpace(response))
                 {
                     var calendar = Parser.FromString(response);
-                    if (calendar != null)
-                    {
-                        var events = calendar.Events.ToList(); // Enumerate for debugging...
-                        return calendar;
-                    }
+                    return calendar;
                 }
             }
-            catch (Exception ex) when (DebugHelper.IsNotHandled<CalendarService>(ex))
+            catch (Exception ex) when (DebugHelper.IsHandled<CalendarService>(ex))
             {
                 // Do nothing...
             }

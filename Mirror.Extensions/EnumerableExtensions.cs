@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Mirror.Extensions
 {
-    static class EnumerableExtensions
+    public static class EnumerableExtensions
     {
         static Random Random => new Random((int)DateTime.Now.Ticks);
 

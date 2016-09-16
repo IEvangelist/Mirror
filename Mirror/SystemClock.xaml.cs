@@ -1,4 +1,4 @@
-﻿using Mirror.Extensions;
+﻿using Mirror.ViewModels;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,7 +8,7 @@ namespace Mirror
 {
     public sealed partial class SystemClock : UserControl
     {
-        DispatcherTimer _timer = new DispatcherTimer();
+        DispatcherTimer _timer;
 
         public SystemClock()
         {
@@ -21,9 +21,7 @@ namespace Mirror
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _timer.Stop();
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick -= OnTimerTick;
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _timer.Tick += OnTimerTick;
             _timer.Start();
         }
@@ -32,10 +30,7 @@ namespace Mirror
 
         void UpdateClock()
         {
-            var now = GetLocalTime();
-            _timeLabel.Text = now.ToString("h:mm");
-            _secondsLabel.Text = now.ToString("ss");
-            _dayAndDateLabel.Text = $"{now:dddd}, {now:MMMM} {now.Day.ToOrdinalString()}";
+            DataContext = new ClockViewModel(this, GetLocalTime());
         }
 
         void OnUnloaded(object sender, RoutedEventArgs e)

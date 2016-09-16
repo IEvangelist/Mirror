@@ -5,7 +5,7 @@ namespace Mirror.Calendar
 {
     public class Calendar
     {
-        public static Calendar Empty => new Calendar();
+        public static Calendar Empty { get; } = new Calendar();
 
         public IEnumerable<Event> Events { get; }
 
