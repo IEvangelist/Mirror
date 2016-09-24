@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Loaded="OnLoaded">
+    Loaded="OnLoaded" Padding="0,12,0,0">
     <UserControl.Resources>
         <LinearGradientBrush x:Key="Fade" StartPoint="0,0.5" EndPoint="1,0.5">
             <GradientStop Color="White" Offset="0"/>
@@ -26,7 +26,7 @@
             <GridView ItemsSource="{Binding Events}" HorizontalAlignment="Left">
                 <GridView.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderThickness="2" BorderBrush="{StaticResource Fade}" HorizontalAlignment="Left" MinWidth="290" CornerRadius="6" Margin="0, 6">
+                        <Border BorderThickness="0,2,0,0" BorderBrush="{StaticResource Fade}" HorizontalAlignment="Left" MinWidth="290" CornerRadius="0" Margin="0, 6">
                             <StackPanel Orientation="Vertical" Padding="12" HorizontalAlignment="Left">
                                 <TextBlock Text="{Binding Day}" FontSize="22" />
                                 <TextBlock Text="{Binding Hours}" FontSize="16" />

@@ -106,7 +106,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
-    <PRIResource Include="SpeechResources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />

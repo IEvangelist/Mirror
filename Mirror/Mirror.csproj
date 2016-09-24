@@ -130,6 +130,9 @@
     <Content Include="Assets\PoiretOne-Regular.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <PRIResource Include="SpeechResources.resw">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </PRIResource>
     <PRIResource Include="Configuration.resw" />
     <Content Include="Assets\emoticons.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

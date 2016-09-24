@@ -140,16 +140,13 @@ namespace Mirror.Speech
 
             try
             {
-                // If no mic is available, do nothing.
                 if (!await IsMicrophoneAvailableAsync())
                 {
                     return;
                 }
-
-                // Compile the grammar, based on the value of the RecognitionMode property.
+                
                 await CompileGrammarAsync();
-
-                // You can attach these event handlers only after the grammar is compiled. 
+                
                 SpeechRecognizer.ContinuousRecognitionSession.Completed += OnContinuousRecognitionSessionCompleted;
                 SpeechRecognizer.ContinuousRecognitionSession.ResultGenerated += OnContinuousRecognitionSessionResultGenerated;
 
@@ -159,18 +156,7 @@ namespace Mirror.Speech
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("SpeechManager: Failed to start continuous recognition session.");
-
-                var messageDialog = new MessageDialog(
-                    $"{ex.Message}",
-                    "Failed to start continuous recognition session");
-
-                messageDialog.Commands.Add(new UICommand("Go to settings...", async (command) =>
-                {
-                    bool result = await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-microphone"));
-                }));
-                messageDialog.Commands.Add(new UICommand("Close", (command) => { }));
-                await messageDialog.ShowAsync();
+                Debug.WriteLine("SpeechManager: Failed to start continuous recognition session. ERROR:: " + ex.Message);
             }
             finally
             {
