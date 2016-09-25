@@ -2,6 +2,7 @@
 using Mirror.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,18 +21,18 @@ namespace Mirror.Networking
         async Task<IEnumerable<Calendar.Calendar>> ICalendarService.GetCalendarsAsync()
         {
             var settings = Settings.Instance;
-            var getCentareCalendarTask = GetCalendarAsync(settings.CentareCalendarUrl);
-            var getJciCalTask =
-                GetCalendarAsync(settings.JohnsonControlsCalendarUrl,
-                                 () => new HttpClient(
-                                           new HttpClientHandler
-                                           {
-                                               Credentials =
-                                                   new NetworkCredential(settings.CalendarUsername,
-                                                                         settings.CalendarPassword)
-                                           }));
 
-            return await Task.WhenAll(getJciCalTask, getCentareCalendarTask);
+            var getCalendarTasks =
+                settings
+                    .Calendars
+                   ?.Select(
+                       cal =>
+                       GetCalendarAsync(cal.Url,
+                                        cal.IsUsingCredentials
+                                            ? () => new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(cal.Username, cal.Password) })
+                                            : null as Func<HttpClient>));
+
+            return await Task.WhenAll(getCalendarTasks);
         }
 
         static async Task<Calendar.Calendar> GetCalendarAsync(string url, Func<HttpClient> getClient = null)

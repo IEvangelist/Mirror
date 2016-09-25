@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -63,5 +64,17 @@ namespace Mirror.Extensions
             => Regex.Replace(value, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
 
         public static T ToEnum<T>(this string value) => (T)Enum.Parse(typeof(T), value);
+
+        public static T Deserialize<T>(this string value)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(value);
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
     }
 }
