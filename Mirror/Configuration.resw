@@ -120,20 +120,11 @@
   <data name="AzureEmotionApiKey" xml:space="preserve">
     <value />
   </data>
-  <data name="CalendarPassword" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CalendarUsername" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CentareCalendarUrl" xml:space="preserve">
+  <data name="Calendars" xml:space="preserve">
     <value />
   </data>
   <data name="City" xml:space="preserve">
     <value>Pewaukee</value>
-  </data>
-  <data name="JohnsonControlsCalendarUrl" xml:space="preserve">
-    <value />
   </data>
   <data name="OpenWeatherApiKey" xml:space="preserve">
     <value />
