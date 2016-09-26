@@ -5,7 +5,7 @@ namespace Mirror.Emotion
 {
     public class Result
     {
-        public static Result Empty => new Result();
+        public static Result Empty { get; } = new Result();
 
         public Emotions Emotion { get; private set; }
         public float Score { get; private set; }
