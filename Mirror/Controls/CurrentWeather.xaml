@@ -27,9 +27,9 @@
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBlock x:Name="_sunRiseOrSetLabel" Text="{Binding SunRiseOrSet}" FontSize="20" Padding="6,0,3,0" />
-                <TextBlock x:Name="_sunIcon" FontFamily="Assets/meteocons.ttf#Meteocons" Text="A" FontSize="20" Padding="3,0,6,0" />
+                <TextBlock x:Name="_sunIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="A" FontSize="20" Padding="3,0,6,0" />
                 <TextBlock x:Name="_windLabel" FontSize="20" Text="{Binding Wind}" Padding="6,0,3,0" />
-                <TextBlock x:Name="_windIcon" FontFamily="Assets/meteocons.ttf#Meteocons" Text="F" FontSize="20" Padding="3,0,6,0" />
+                <TextBlock x:Name="_windIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="F" FontSize="20" Padding="3,0,6,0" />
                 <TextBlock x:Name="_locationLabel" FontSize="20" Text="{Binding Location}" Padding="6,0,3,0" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
@@ -47,7 +47,7 @@
                            Text="{Binding Temp, 
                                           Converter={StaticResource StringFormatConverter}, 
                                           ConverterParameter=' {0:#}°'}" />
-                <TextBlock x:Name="_weatherIcon" FontFamily="Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="72" Padding="12,6,0,0" />
+                <TextBlock x:Name="_weatherIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="72" Padding="12,6,0,0" />
             </StackPanel>
             <StackPanel>
                 <TextBlock x:Name="_conditionLabel" FontSize="30" Text="{Binding Conditions}" />

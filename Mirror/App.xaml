@@ -5,7 +5,7 @@
     xmlns:local="using:Mirror"
     RequestedTheme="Dark">
     <Application.Resources>
-        <FontFamily x:Key="ContentControlThemeFontFamily">Assets/PoiretOne-Regular.ttf#Poiret One</FontFamily>
+        <FontFamily x:Key="ContentControlThemeFontFamily">ms-appx:/Assets/PoiretOne-Regular.ttf#Poiret One</FontFamily>
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         </Style>

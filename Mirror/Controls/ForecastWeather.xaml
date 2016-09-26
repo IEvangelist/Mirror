@@ -26,7 +26,7 @@
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="{Binding Day}" FontWeight="Bold" Padding="0,0,0,3" HorizontalAlignment="Center" />
                             <Border BorderBrush="White" BorderThickness="0,2,0,1" Padding="0,6">
-                                <TextBlock FontFamily="Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="22" HorizontalAlignment="Center" />
+                                <TextBlock FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="22" HorizontalAlignment="Center" />
                             </Border>
                             <TextBlock Text="{Binding Low, 
                                               Converter={StaticResource StringFormatConverter}, 
