@@ -146,7 +146,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AudioPlayer.xaml.cs">
+    <Compile Include="Controls\AudioPlayer.xaml.cs">
       <DependentUpon>AudioPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Calendar\Calendar.cs" />
@@ -163,15 +163,15 @@
     <Compile Include="Emotion\Emoticons.cs" />
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Weather.cs" />
-    <Compile Include="CurrentWeather.xaml.cs">
+    <Compile Include="Controls\CurrentWeather.xaml.cs">
       <DependentUpon>CurrentWeather.xaml</DependentUpon>
     </Compile>
     <Compile Include="Emotion\Emotions.cs" />
     <Compile Include="Emotion\Result.cs" />
-    <Compile Include="EventCalendar.xaml.cs">
+    <Compile Include="Controls\EventCalendar.xaml.cs">
       <DependentUpon>EventCalendar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ForecastWeather.xaml.cs">
+    <Compile Include="Controls\ForecastWeather.xaml.cs">
       <DependentUpon>ForecastWeather.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\AudioService.cs" />
@@ -188,7 +188,7 @@
     <Compile Include="Networking\Internet.cs" />
     <Compile Include="Networking\WeatherService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemClock.xaml.cs">
+    <Compile Include="Controls\SystemClock.xaml.cs">
       <DependentUpon>SystemClock.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BaseViewModel.cs" />
@@ -353,19 +353,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="AudioPlayer.xaml">
+    <Page Include="Controls\AudioPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CurrentWeather.xaml">
+    <Page Include="Controls\CurrentWeather.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EventCalendar.xaml">
+    <Page Include="Controls\EventCalendar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ForecastWeather.xaml">
+    <Page Include="Controls\ForecastWeather.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -373,7 +373,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SystemClock.xaml">
+    <Page Include="Controls\SystemClock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
