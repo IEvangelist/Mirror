@@ -8,4 +8,9 @@ If you fork this repository, you will need to configure the application in order
  - `WeatherUom` desired UOM, `imperial` or `metric`.
  - `City` the city in which to query weather for, i.e.; for me this is `Pewaukee` since that is where I live.
  - `Calendars` this is a complex object that is stored as **JSON** and serialized / deserialized as a `List<CalendarConfig>` (where credentials are optional). The only requirement is that the _URL_ is an accessible endpoint that returns valid `iCal` (`*.ics`) formatting -- http://icalendar.org/. 
- 
+
+###Note
+To ensure your settings and API keys remain safe and secure, execute the following command to remove the local changes you make to the configuration from `git` ever watching eye.
+ ```
+ git update-index --assume-unchanged "[file path]\Mirror\Configuration.resw"
+ ```
