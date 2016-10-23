@@ -1,6 +1,5 @@
 ﻿using Mirror.Controls;
 using Mirror.Core;
-using Mirror.Extensions;
 using Mirror.Networking;
 using Mirror.Speech;
 using Mirror.ViewModels;
@@ -13,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Mirror
 {
-    public sealed partial class CurrentWeather : UserControl, IContextSynthesizer
+    public sealed partial class CurrentWeather : UserControl, IAsyncLoader, IContextSynthesizer
     {
         DispatcherTimer _timer;
         IWeatherService _weatherService;
@@ -38,13 +37,8 @@ namespace Mirror
             _loading.Visibility = isContentVisible ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        async void OnLoaded(object sender, RoutedEventArgs e)
+        async Task IAsyncLoader.LoadAsync()
         {
-            if (DesignMode.DesignModeEnabled)
-            {
-                return;
-            }
-
             _weatherService = Services.Get<IWeatherService>();
 
             await LoadWeatherAsync();
@@ -52,6 +46,14 @@ namespace Mirror
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(15) };
             _timer.Tick += OnTimerTick;
             _timer.Start();
+        }
+
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (DesignMode.DesignModeEnabled)
+            {
+                return;
+            }            
         }
 
         async void OnTimerTick(object sender, object e) => await LoadWeatherAsync();

@@ -16,7 +16,7 @@ using static Mirror.Calendar.Calendar;
 
 namespace Mirror
 {
-    public sealed partial class EventCalendar : UserControl, IContextSynthesizer
+    public sealed partial class EventCalendar : UserControl, IAsyncLoader, IContextSynthesizer
     {
         DispatcherTimer _timer;
         ICalendarService _calendarService;
@@ -35,13 +35,16 @@ namespace Mirror
                                                              dateContext,
                                                              UnableToGenerateSpeechMessage);
 
-        private async void OnLoaded(object sender, RoutedEventArgs args)
+        void OnLoaded(object sender, RoutedEventArgs args)
         {
             if (DesignMode.DesignModeEnabled)
             {
                 return;
             }
+        }
 
+        async Task IAsyncLoader.LoadAsync()
+        {
             _calendarService = Services.Get<ICalendarService>();
 
             await LoadCalendarEventsAsync();

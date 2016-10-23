@@ -157,6 +157,7 @@
     <Compile Include="Calendar\TimeZoneParser.cs" />
     <Compile Include="Calendar\vEvent.cs" />
     <Compile Include="Calendar\Parser.cs" />
+    <Compile Include="Controls\IAsyncLoader.cs" />
     <Compile Include="Controls\SpeechControlHelper.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Core\Services.cs" />

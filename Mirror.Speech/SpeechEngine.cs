@@ -11,8 +11,6 @@ using Windows.ApplicationModel.Resources.Core;
 using Windows.Media.Capture;
 using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
-using Windows.System;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -54,7 +52,10 @@ namespace Mirror.Speech
 
         SemaphoreSlim Mutex => _mutex ?? (_mutex = new SemaphoreSlim(1));
 
-        SpeechSynthesizer SpeechSynthesizer => _speechSynthesizer ?? (_speechSynthesizer = new SpeechSynthesizer());
+        SpeechSynthesizer SpeechSynthesizer => _speechSynthesizer ?? (_speechSynthesizer = new SpeechSynthesizer
+        {
+            Voice = SpeechSynthesizer.AllVoices.FirstOrDefault(voice => voice.Gender == VoiceGender.Female) ?? SpeechSynthesizer.DefaultVoice
+        });
 
         SemaphoreSlim Semaphore => _semaphore ?? (_semaphore = new SemaphoreSlim(0, 1));
 
@@ -91,12 +92,12 @@ namespace Mirror.Speech
         {
             try
             {
-                var language = SpeechRecognizer.SystemSpeechLanguage;
+                //var language = SpeechRecognizer.SystemSpeechLanguage;
 
                 _speechContext = ResourceContext.GetForCurrentView();
-                _speechContext.Languages = new string[] { language.LanguageTag };
+                //_speechContext.Languages = new string[] { language.LanguageTag };
 
-                _speechRecognizer = new SpeechRecognizer(language);
+                _speechRecognizer = new SpeechRecognizer();
                 _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;
             }
             catch (Exception ex)
@@ -168,8 +169,13 @@ namespace Mirror.Speech
         {
             if (!string.IsNullOrEmpty(phrase))
             {
+                bool isPauseRquired = RecognitionMode != SpeechRecognitionMode.Paused;
+
                 // Turn off speech recognition while speech synthesis is happening.
-                await _.SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
+                if (isPauseRquired)
+                {
+                    await _.SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
+                }
 
                 MediaPlayerElement = media;
                 var stream = await SpeechSynthesizer.SynthesizeTextToStreamAsync(phrase);
@@ -186,7 +192,10 @@ namespace Mirror.Speech
                 await Semaphore.WaitAsync();
 
                 // Turn on speech recognition and listen for commands.
-                await _.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
+                if (isPauseRquired)
+                {
+                    await _.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
+                }
             }
         }
 
@@ -439,8 +448,11 @@ namespace Mirror.Speech
         async Task ISpeechEngine.EndRecognitionSessionAsync()
         {
             // Detach event handlers.
-            SpeechRecognizer.ContinuousRecognitionSession.Completed -= OnContinuousRecognitionSessionCompleted;
-            SpeechRecognizer.ContinuousRecognitionSession.ResultGenerated -= OnContinuousRecognitionSessionResultGenerated;
+            if (SpeechRecognizer != null && SpeechRecognizer.ContinuousRecognitionSession != null)
+            {
+                SpeechRecognizer.ContinuousRecognitionSession.Completed -= OnContinuousRecognitionSessionCompleted;
+                SpeechRecognizer.ContinuousRecognitionSession.ResultGenerated -= OnContinuousRecognitionSessionResultGenerated;
+            }
 
             // Stop the recognition session, if it's in progress.
             if (_isInRecognitionSession)

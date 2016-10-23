@@ -15,25 +15,19 @@ namespace Mirror.Speech
                 return Command.None;
             }
 
-            if (phrase.StartsWith("Help", StringComparison.OrdinalIgnoreCase))
+            if (phrase.StartsWith("Help", StringComparison.OrdinalIgnoreCase) || Contains(phrase, "What can I say"))
             {
                 return Command.Help;
             }
-            else if (StartsWith(phrase, "Look"))
+            else if (StartsWith(phrase, "Look") || 
+                     Contains(phrase, "How do I look") ||
+                     Contains(phrase, "Tell me how I look"))
             {
                 return Command.Emotion;
             }
             else if (StartsWithAny(phrase, "What", "Read", "How", "On"))
             {
-                if (Contains(phrase, "say"))
-                {
-                    return Command.Help;
-                }
-                else if (Contains(phrase, "look"))
-                {
-                    return Command.Emotion;
-                }
-                else if (ContainsAny(phrase, "event", "calendar"))
+                if (ContainsAny(phrase, "event", "calendar"))
                 {
                     DateTime? dateContext;
                     if (Contains(phrase, "on") && TryParseContext(phrase, out dateContext))
@@ -87,6 +81,18 @@ namespace Mirror.Speech
                     return true;
                 }
             }
+
+            if (Contains(phrase, "today"))
+            {
+                dateContext = DateTime.Now;
+                return true;
+            }
+            else if (Contains(phrase, "tomorrow"))
+            {
+                dateContext = DateTime.Now.AddDays(1);
+                return true;
+            }
+
             return false;
         }
     }

@@ -2,6 +2,7 @@
 
 using MetroLog;
 using Microsoft.ProjectOxford.Emotion;
+using Mirror.Controls;
 using Mirror.Core;
 using Mirror.Emotion;
 using Mirror.Extensions;
@@ -10,7 +11,6 @@ using Mirror.IO;
 using Mirror.Logging;
 using Mirror.Models;
 using Mirror.Speech;
-using Mirror.Threading;
 using Mirror.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -19,19 +19,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.Devices;
-using Windows.Media.FaceAnalysis;
 using Windows.Media.MediaProperties;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 using RawEmotion = Microsoft.ProjectOxford.Emotion.Contract.Emotion;
 
 #endregion
@@ -49,9 +42,8 @@ namespace Mirror
         bool _isStreaming;
         bool _isProcessing;
         int _captureCounter;
-        const int MaxCaptureBeforeReset = 3;
+        const int MaxCaptureBeforeReset = 2;
         ILogger _logger = LoggerFactory.Get<MainPage>();
-        FaceTracker _faceTracker;
         VideoEncodingProperties _videoProperties;
         DispatcherTimer _frameProcessingTimer;
         SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
@@ -73,37 +65,31 @@ namespace Mirror
         {
             _messageLabel.Text = "Hello";
             
-            _faceTracker = await FaceTracker.CreateAsync();
+            // I want these to be serialized.
+            foreach (var loader in new IAsyncLoader[] { _currentWeather, _forecastWeather, _eventCalendar }.Where(loader => loader != null))
+            {
+                await loader.LoadAsync();
+            }
 
-            _speechEngine.PhraseRecognized += OnspeechEnginePhraseRecognized;
+            _speechEngine.PhraseRecognized += OnSpeechEnginePhraseRecognized;
             _speechEngine.StateChanged += OnSpeechEngineStateChanged;
+            _speaker.Volume = .2;
 
             await _speechEngine.StartContinuousRecognitionAsync();
-            //await Task.WhenAll(//ChangeStreamStateAsync(true));,
-            //                   InitializeSpeechRecognizerAsync());
-
-            //var iPod = await Bluetooth.PairAsync();
-
-            //if (iPod != null)
-            //{
-            //    var device = await Bluetooth.FromIdAsync(iPod.Id);
-            //    if (device != null)
-            //    {
-
-            //    }
-            //}
         }
 
         async void OnSpeechEngineStateChanged(object sender, StateChangedEventArgs e)
             => await this.ThreadSafeAsync(() => _hypothesis.Text = e.ToString());
 
-        async void OnspeechEnginePhraseRecognized(object sender, PhraseRecognizedEventArgs e)
+        async void OnSpeechEnginePhraseRecognized(object sender, PhraseRecognizedEventArgs e)
         {
+            await this.ThreadSafeAsync(() => _voiceCommand.Text = e.CommandContext.Command.ToString().SplitCamelCase());
+
             IContextSynthesizer synthesizer = null;
             switch (e.CommandContext.Command)
             {
                 case Command.CurrentWeather:
-                    synthesizer = _currentWeahther;
+                    synthesizer = _currentWeather;
                     break;
                 case Command.ForecastWeather:
                     synthesizer = _forecastWeather;
@@ -112,14 +98,17 @@ namespace Mirror
                     synthesizer = _eventCalendar;
                     break;
                 case Command.Audio:
+                    await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
                     IAudioCommandListener audioListener = _audioPlayer;
                     await audioListener.PlayRandomSongAsync();
                     break;
                 case Command.Volume:
                     IVolumeCommandListener volumeListener = _audioPlayer;
                     await volumeListener.SetVolumeAsync(e.PhraseText);
+                    await _speaker.SetVolumeFromCommandAsync(e.PhraseText);
                     break;
                 case Command.Emotion:
+                    await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
                     await this.ThreadSafeAsync(async () => await ChangeStreamStateAsync(true));
                     break;
                 case Command.Help:
@@ -130,9 +119,9 @@ namespace Mirror
             if (synthesizer != null)
             {
                 await this.ThreadSafeAsync(
-                    async () => 
+                    async () =>
                         await _speechEngine.SpeakAsync(
-                            await synthesizer.GetContextualMessageAsync(e.CommandContext.DateContext), _speaker));                
+                            await synthesizer.GetContextualMessageAsync(e.CommandContext.DateContext), _speaker));
             }
         }
 
@@ -259,63 +248,44 @@ namespace Mirror
 
             try
             {
-                using (var previewFrame = new VideoFrame(BitmapPixelFormat.Nv12,
-                                                         (int)_videoProperties.Width,
-                                                         (int)_videoProperties.Height))
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
-                    await _mediaManager.GetPreviewFrameAsync(previewFrame);
+                    if (_isProcessing) return;
 
-                    IList<DetectedFace> faces = null;
-
-                    // The returned VideoFrame should be in the supported NV12 format but we need to verify this.
-                    if (FaceDetector.IsBitmapPixelFormatSupported(previewFrame.SoftwareBitmap.BitmapPixelFormat))
+                    var emotions = await CaptureEmotionAsync();
+                    if (emotions.IsNullOrEmpty() == false)
                     {
-                        faces = await _faceTracker.ProcessNextFrameAsync(previewFrame);
-                    }
+                        var mostProbable =
+                            emotions.ToResults()
+                                    .Where(result => result != Result.Empty)
+                                    .FirstOrDefault();
 
-                    //// Create our visualization using the frame dimensions and face results but run it on the UI thread.
-                    var previewFrameSize = new Size(previewFrame.SoftwareBitmap.PixelWidth, previewFrame.SoftwareBitmap.PixelHeight);
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                    {
-                        SetupVisualization(previewFrameSize, faces);
-
-                        if (_isProcessing) return;
-
-                        var emotions = await CaptureEmotionAsync();
-                        if (emotions.IsNullOrEmpty() == false)
+                        if (mostProbable == null)
                         {
-                            var mostProbable =
-                                emotions.ToResults()
-                                        .Where(result => result != Result.Empty)
-                                        .FirstOrDefault();
+                            _messageLabel.Text = string.Empty;
+                            _emoticon.Text = string.Empty;
+                        }
+                        else
+                        {
+                            _emoticon.Text = Emoticons.From(mostProbable.Emotion);
 
-                            if (mostProbable == null)
+                            var current = _messageLabel.Text;
+                            var message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
+                            while (current == message)
                             {
-                                _messageLabel.Text = string.Empty;
-                                _emoticon.Text = string.Empty;
+                                message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
                             }
-                            else
+                            _messageLabel.Text = message;
+                            await _speechEngine.SpeakAsync(message, _speaker);
+                            
+                            if (++ _captureCounter >= MaxCaptureBeforeReset)
                             {
-                                _emoticon.Text = Emoticons.From(mostProbable.Emotion);
-
-                                var current = _messageLabel.Text;
-                                var message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
-                                while (current == message)
-                                {
-                                    message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
-                                }
-                                _messageLabel.Text = message;
-                                await _speechEngine.SpeakAsync(message, _speaker);
-
-                                ++ _captureCounter;
-                                if (_captureCounter >= MaxCaptureBeforeReset)
-                                {
-                                    await ChangeStreamStateAsync(false);
-                                }
+                                await ChangeStreamStateAsync(false);
+                                await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
             catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
             {
@@ -325,43 +295,6 @@ namespace Mirror
                 _frameProcessingSemaphore.Release();
             }
         }
-
-        void SetupVisualization(Size framePixelSize, IList<DetectedFace> foundFaces)
-        {
-            _visualizationCanvas.Children.Clear();
-
-            var actualWidth = _visualizationCanvas.ActualWidth;
-            var actualHeight = _visualizationCanvas.ActualHeight;
-
-            if (_isStreaming && !foundFaces.IsNullOrEmpty() && actualWidth != 0 && actualHeight != 0)
-            {
-                var widthScale = framePixelSize.Width / actualWidth;
-                var heightScale = framePixelSize.Height / actualHeight;
-
-                var face = GetClosestFace(foundFaces);
-                if (face != null)
-                {
-                    var box = new Rectangle
-                    {
-                        Width = (uint)(face.FaceBox.Width / widthScale),
-                        Height = (uint)(face.FaceBox.Height / heightScale),
-                        Fill = new SolidColorBrush(Colors.Transparent),
-                        Stroke = new SolidColorBrush(Colors.Azure),
-                        Opacity = .25,
-                        StrokeThickness = 2,
-                        RadiusX = 15,
-                        RadiusY = 15,
-                        Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0)
-                    };
-
-                    _visualizationCanvas.Children.Add(box);
-                }
-            }
-        }
-
-        static DetectedFace GetClosestFace(IList<DetectedFace> faces)
-            => faces?.OrderByDescending(face => face.FaceBox.Height + face.FaceBox.Width)
-                     .FirstOrDefault();
 
         async Task ChangeStreamStateAsync(bool isStreaming)
         {
@@ -388,22 +321,24 @@ namespace Mirror
                     break;
             }
         }
-
-        /// <summary>
-        /// Handles MediaCapture stream failures by shutting down streaming and returning to Idle state.
-        /// </summary>
+        
         async void OnCameraStreamFailed(MediaCapture sender, object args)
             => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 async () =>
                     await ChangeStreamStateAsync(false));
 
-        async Task OnTrackedChanged(object sender, Song song) 
+        async Task OnTrackedChanged(object sender, Song song)
             => await this.ThreadSafeAsync(() => _songDetails.Text = song.ToString());
 
         Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)
-            => Task.FromResult("You can say things like, \"what's the weather\", \"read the forecast\", or \"what is the temparature\". " + 
-                               "Or you could ask \"what's my calendar look like\" or \"what are my upcoming events\". " + 
+            => Task.FromResult("You can say things like, \"what's the weather\", \"read the forecast\", or \"what is the temparature\". " +
+                               "Or you could ask \"what's my calendar look like\" or \"what are my upcoming events\". " +
                                "For music, you can say \"play a song\", \"turn this up\", and other common commands like, \"mute\", etc. " +
                                "Finally, you can ask \"how do I look\"!");
+
+        async void OnSpeakerVolumeChanged(object sender, RoutedEventArgs e)
+            => await this.ThreadSafeAsync(() => _volume.Text = $"Volume: {_speaker.Volume:P0}");
+
+        async Task OnSongEnded(object sender, bool e) => await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
     }
 }

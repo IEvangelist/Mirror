@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Windows.Networking;
 using Windows.Networking.Connectivity;
 
 
@@ -17,11 +19,14 @@ namespace Mirror.Networking
         public ConnectionType Type { get; }
         public byte? SignalBars { get; }
         public bool IsConnectionAvailable => Type != default(ConnectionType);
+        public string IpAddress { get; }
 
         public ConnectionStatus(ConnectionType type,
-                                byte? signalBars= null)
+                                string ipAddress,
+                                byte? signalBars = null)
         {
             Type = type;
+            IpAddress = ipAddress;
             SignalBars = signalBars;
         }
     }
@@ -46,17 +51,23 @@ namespace Mirror.Networking
             {
                 if (profile?.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess)
                 {
+                    var ipHost = 
+                        NetworkInformation.GetHostNames()
+                                          .FirstOrDefault(host => 
+                                                          host.IPInformation != null && 
+                                                          host.Type == HostNameType.Ipv4);
+                    var ipAddress = ipHost?.ToString() ?? "0.0.0.1";
                     if (profile.IsWlanConnectionProfile)
                     {
-                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Wifi, profile.GetSignalBars()));
+                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Wifi, ipAddress, profile.GetSignalBars()));
                     }
                     else if (profile.IsWwanConnectionProfile)
                     {
-                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Cellular, profile.GetSignalBars()));
+                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Cellular, ipAddress, profile.GetSignalBars()));
                     }
                     else
                     {
-                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Ethernet));
+                        ConnectionChanged?.Invoke(new ConnectionStatus(ConnectionType.Ethernet, ipAddress));
                     }
                 }
                 else

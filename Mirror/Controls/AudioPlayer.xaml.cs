@@ -21,6 +21,7 @@ namespace Mirror
     public sealed partial class AudioPlayer : UserControl, IAudioCommandListener, IVolumeCommandListener
     {
         public event AsyncEventHandler<Song> TrackChanged;
+        public event AsyncEventHandler<bool> SongEnded; 
 
         IEnumerable<StorageFile> _songs;
         IAudioService _audioService;
@@ -46,33 +47,7 @@ namespace Mirror
                 _mediaElement.Play();
             });
 
-        Task IVolumeCommandListener.SetVolumeAsync(string phrase) =>
-            this.ThreadSafeAsync(() => 
-            {
-                var volume = _mediaElement.Volume;
-                if (phrase.ContainsIgnoringCase("unmute"))
-                {
-                    _mediaElement.IsMuted = false;
-                }
-                else if (phrase.ContainsIgnoringCase("mute"))
-                {
-                    _mediaElement.IsMuted = true;
-                }
-                else if (phrase.ContainsIgnoringCase("up") ||
-                         phrase.ContainsIgnoringCase("loud"))
-                {
-                    _mediaElement.Volume = Math.Min(1, volume + .1);
-                }
-                else if (phrase.ContainsIgnoringCase("down") ||
-                         phrase.ContainsIgnoringCase("quiet"))
-                {
-                    _mediaElement.Volume = Math.Max(0, volume - .1);
-                }
-                else if (phrase.ContainsIgnoringCase("percent"))
-                {
-                    _mediaElement.Volume = GetPercent(phrase);
-                }
-            });
+        Task IVolumeCommandListener.SetVolumeAsync(string phrase) => _mediaElement.SetVolumeFromCommandAsync(phrase);           
 
         static double GetPercent(string phrase)
         {
@@ -91,5 +66,7 @@ namespace Mirror
 
             _audioService = Services.Get<IAudioService>();
         }
+
+        async void OnMediaEnded(object sender, RoutedEventArgs e) => await SongEnded?.Invoke(this, true);
     }
 }

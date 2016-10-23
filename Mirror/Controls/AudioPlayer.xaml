@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="OnLoaded">
-    <MediaElement x:Name="_mediaElement" AreTransportControlsEnabled="True" Volume="0.5">
+    <MediaElement x:Name="_mediaElement" AreTransportControlsEnabled="True" Volume="0.2" MediaEnded="OnMediaEnded" >
         <MediaElement.TransportControls>
             <MediaTransportControls IsCompact="True" IsFullWindowButtonVisible="False" IsFullWindowEnabled="False" 
                                     IsZoomEnabled="False" IsZoomButtonVisible="False" IsRightTapEnabled="False" RequestedTheme="Dark" />

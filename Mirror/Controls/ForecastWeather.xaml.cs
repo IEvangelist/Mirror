@@ -11,7 +11,7 @@ using Mirror.Controls;
 
 namespace Mirror
 {
-    public sealed partial class ForecastWeather : UserControl, IContextSynthesizer
+    public sealed partial class ForecastWeather : UserControl, IAsyncLoader, IContextSynthesizer
     {
         DispatcherTimer _timer;
         IWeatherService _weatherService;
@@ -24,13 +24,16 @@ namespace Mirror
             InitializeComponent();
         }
 
-        async void OnLoaded(object sender, RoutedEventArgs e)
+        void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (DesignMode.DesignModeEnabled)
             {
                 return;
             }
+        }
 
+        async Task IAsyncLoader.LoadAsync()
+        {
             _weatherService = Services.Get<IWeatherService>();
 
             await LoadForecastAsync();

@@ -7,6 +7,7 @@ namespace Mirror.ViewModels
     public class HudViewModel : BaseViewModel
     {
         Uri _connectivitySource = new Uri($"ms-appx:///Assets/wifi-1.png");
+        string _ipAddress = "0.0.0.0";
 
         public Uri ConnectivitySource
         {
@@ -18,6 +19,16 @@ namespace Mirror.ViewModels
             }
         }
 
+        public string IpAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                _ipAddress = value;
+                OnPropertyChanged(this, nameof(IpAddress));
+            }
+        }
+
         public HudViewModel(DependencyObject dependency) : base(dependency)
         {
             Internet.ConnectionChanged = OnConnectionChanged;
@@ -26,6 +37,7 @@ namespace Mirror.ViewModels
 
         void OnConnectionChanged(ConnectionStatus connection)
         {
+            IpAddress = connection.IpAddress;
             switch (connection.Type)
             {
                 case ConnectionType.Ethernet:
