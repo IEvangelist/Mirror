@@ -53,8 +53,7 @@
                                                          Converter={StaticResource StringFormatConverter},
                                                          ConverterParameter='ms-appx:/Assets/Weather/{0:0#}.png' }" />
                     </Image.Source>
-                </Image>
-                <!--<TextBlock x:Name="_weatherIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="72" Padding="12,6,0,0" />-->
+                </Image>                
             </StackPanel>
             <StackPanel>
                 <TextBlock x:Name="_conditionLabel" FontSize="30" Text="{Binding Conditions}" />
