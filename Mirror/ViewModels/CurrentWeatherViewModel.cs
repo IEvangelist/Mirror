@@ -29,7 +29,7 @@ namespace Mirror.ViewModels
 
         public string Location => _currentWeather.Name;
 
-        public string Icon => Weather.Icons[_weather.Icon];
+        public int Icon => Weather.ImageIcons[_weather.Icon];
 
         public CurrentWeatherViewModel(DependencyObject dependency, Models.Current currentWeather) : base(dependency)
         {

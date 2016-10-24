@@ -47,7 +47,14 @@
                            Text="{Binding Temp, 
                                           Converter={StaticResource StringFormatConverter}, 
                                           ConverterParameter=' {0:#}°'}" />
-                <TextBlock x:Name="_weatherIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="72" Padding="12,6,0,0" />
+                <Image x:Name="_weatherImageIcon"  Stretch="UniformToFill" Height="100" Width="120">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding Icon, 
+                                                         Converter={StaticResource StringFormatConverter},
+                                                         ConverterParameter='ms-appx:/Assets/Weather/{0:0#}.png' }" />
+                    </Image.Source>
+                </Image>
+                <!--<TextBlock x:Name="_weatherIcon" FontFamily="ms-appx:/Assets/meteocons.ttf#Meteocons" Text="{Binding Icon}" FontSize="72" Padding="12,6,0,0" />-->
             </StackPanel>
             <StackPanel>
                 <TextBlock x:Name="_conditionLabel" FontSize="30" Text="{Binding Conditions}" />

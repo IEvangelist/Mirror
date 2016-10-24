@@ -24,6 +24,8 @@ namespace Mirror.Core
     {
         public static Map Icons => new Map();
 
+        public static ImageMap ImageIcons => new ImageMap();
+
         public class Map
         {
             Dictionary<string, char> Lookup =>
@@ -39,9 +41,29 @@ namespace Mirror.Core
                     { "11d", '0' }, { "11n", '0' },
                     { "13d", 'W' }, { "13n", 'W' },
                     { "50d", 'J' }, { "50n", 'K' }
-                };
+                };            
 
             public string this[string key] => Lookup[key].ToString();
+        }
+
+        public class ImageMap
+        {
+            Dictionary<string, int> ImageLookup =>
+                new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+                {
+                    // Day            Night
+                    { "01d",  1 }, { "01n", 33 },
+                    { "02d",  3 }, { "02n", 35 },
+                    { "03d",  6 }, { "03n", 38 },
+                    { "04d",  7 }, { "04n",  8 },
+                    { "09d", 12 }, { "09n", 12 },
+                    { "10d", 13 }, { "10n", 39 },
+                    { "11d", 15 }, { "11n", 41 },
+                    { "13d", 22 }, { "13n", 44 },
+                    { "50d",  5 }, { "50n", 35 }
+                };
+
+            public int this[string key] => ImageLookup[key];
         }
     }
 }
