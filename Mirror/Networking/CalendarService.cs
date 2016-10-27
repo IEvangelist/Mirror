@@ -1,5 +1,6 @@
 ﻿using Mirror.Calendar;
 using Mirror.Core;
+using Mirror.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,10 +28,15 @@ namespace Mirror.Networking
                     .Calendars
                    ?.Select(
                        cal =>
-                       GetCalendarAsync(cal.Url,
-                                        cal.IsUsingCredentials
-                                            ? () => new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(cal.Username, cal.Password) })
-                                            : null as Func<HttpClient>));
+                       Do.WithRetry(() =>
+                          GetCalendarAsync(cal.Url,
+                                           cal.IsUsingCredentials
+                                               ? () => new HttpClient(new HttpClientHandler
+                                                                      {
+                                                                          Credentials = 
+                                                                              new NetworkCredential(cal.Username, cal.Password)
+                                                                      })
+                                               : null as Func<HttpClient>)));
 
             return await Task.WhenAll(getCalendarTasks);
         }
@@ -51,7 +57,7 @@ namespace Mirror.Networking
                 // Do nothing...
             }
 
-            return await Task.FromResult(Empty);
+            return await TaskCache<Calendar.Calendar>.Value(() => Empty);
         }
     }
 }

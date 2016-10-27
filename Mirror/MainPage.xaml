@@ -15,14 +15,14 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <local:SystemClock x:Name="_systemClock" VerticalAlignment="Top" Margin="30" HorizontalAlignment="Left" />
         <local:CurrentWeather x:Name="_currentWeather" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="30,30" />
-        <local:ForecastWeather x:Name="_forecastWeather" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="30,190" FontSize="20" />
+        <local:ForecastWeather x:Name="_forecastWeather" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="30,225" FontSize="20" />
         <TextBlock x:Name="_messageLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Greetings" FontSize="80" Margin="0,0,0,150" />
-        <CaptureElement x:Name="_preview" Margin="1" FlowDirection="RightToLeft" Visibility="Collapsed" />
+        <CaptureElement x:Name="_preview" Margin="1" FlowDirection="RightToLeft" Width="800" Height="600" Visibility="Collapsed" />
         <Canvas x:Name="_visualizationCanvas" Margin="1" FlowDirection="RightToLeft" />
         <local:EventCalendar x:Name="_eventCalendar" HorizontalAlignment="Left" Margin="30,190,0,60" Padding="0,18,0,0" />
         <TextBlock x:Name="_songDetails" VerticalAlignment="Bottom" Margin="30,0,0,60" FontSize="22" />
         <local:AudioPlayer x:Name="_audioPlayer" TrackChanged="OnTrackedChanged" SongEnded="OnSongEnded" Margin="6,0,-6,0" />
-        <TextBlock x:Name="_volume" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,60,120,112" TextAlignment="Left" FontSize="22" />
+        <TextBlock x:Name="_volume" Text="Volume: 20%" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,60,120,112" TextAlignment="Left" FontSize="22" />
         <TextBlock x:Name="_hypothesis" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,120,60" TextAlignment="Right" FontSize="22" />
         <TextBlock x:Name="_emoticon" Height="36" Width="36" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,78,60" 
                    FontFamily="ms-appx:/Assets/emoticons.ttf#Emoticons standard" TextAlignment="Center" FontSize="32" Text="y" />

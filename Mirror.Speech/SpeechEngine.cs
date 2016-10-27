@@ -92,12 +92,9 @@ namespace Mirror.Speech
         {
             try
             {
-                //var language = SpeechRecognizer.SystemSpeechLanguage;
-
                 _speechContext = ResourceContext.GetForCurrentView();
-                //_speechContext.Languages = new string[] { language.LanguageTag };
 
-                _speechRecognizer = new SpeechRecognizer();
+                _speechRecognizer = new SpeechRecognizer();                
                 _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;
             }
             catch (Exception ex)

@@ -21,7 +21,7 @@ namespace Mirror.Core
                 {
                     // Ease up a bit...
                     await Delay(500).ConfigureAwait(false);
-                    return await TaskCache<T>.Result;
+                    return await TaskCache<T>.Default;
                 }
             }
         }

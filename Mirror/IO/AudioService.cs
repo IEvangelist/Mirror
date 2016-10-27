@@ -15,12 +15,12 @@ namespace Mirror.IO
 
     public class AudioService : IAudioService
     {
+        const string AssetMusicPath = @"Assets\Music";
+
         async Task<IEnumerable<StorageFile>> IAudioService.GetAudioFilesAsync()
         {
-            var musicFolder = await Current.InstalledLocation.GetFolderAsync(@"Assets\Music");
-            var files = await musicFolder.GetAllFilesAsync();
-
-            return files;
+            var musicFolder = await Current.InstalledLocation.GetFolderAsync(AssetMusicPath);
+            return await musicFolder.GetAllFilesAsync();
         }
     }
 }

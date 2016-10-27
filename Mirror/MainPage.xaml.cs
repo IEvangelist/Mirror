@@ -11,12 +11,12 @@ using Mirror.IO;
 using Mirror.Logging;
 using Mirror.Models;
 using Mirror.Speech;
+using Mirror.Threading;
 using Mirror.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
@@ -39,14 +39,9 @@ namespace Mirror
     {
         #region Field(s)
 
-        bool _isStreaming;
-        bool _isProcessing;
         int _captureCounter;
         const int MaxCaptureBeforeReset = 2;
         ILogger _logger = LoggerFactory.Get<MainPage>();
-        VideoEncodingProperties _videoProperties;
-        DispatcherTimer _frameProcessingTimer;
-        SemaphoreSlim _frameProcessingSemaphore = new SemaphoreSlim(1);
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
 
@@ -63,10 +58,15 @@ namespace Mirror
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _messageLabel.Text = "Hello";
-            
+            _messageLabel.Text = "Hello, David";
+
             // I want these to be serialized.
-            foreach (var loader in new IAsyncLoader[] { _currentWeather, _forecastWeather, _eventCalendar }.Where(loader => loader != null))
+            foreach (var loader in new IAsyncLoader[]
+                                   {
+                                       _currentWeather,
+                                       _forecastWeather,
+                                       _eventCalendar
+                                   }.Where(loader => loader != null))
             {
                 await loader.LoadAsync();
             }
@@ -125,12 +125,11 @@ namespace Mirror
             }
         }
 
-        async void OnUnloaded(object sender, RoutedEventArgs e) => await _photoService.CleanupAsync();
+        async void OnUnloaded(object sender, RoutedEventArgs e)
+            => await _photoService.CleanupAsync();
 
         async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
         {
-            _isProcessing = true;
-
             RawEmotion[] result;
 
             try
@@ -143,11 +142,10 @@ namespace Mirror
             finally
             {
                 await _photoService.CleanupAsync();
-                _isProcessing = false;
             }
 
             return result.IsNullOrEmpty()
-                ? await Task.FromResult(Enumerable.Empty<RawEmotion>())
+                ? await TaskCache<IEnumerable<RawEmotion>>.Value(() => Enumerable.Empty<RawEmotion>())
                 : result;
         }
 
@@ -171,6 +169,7 @@ namespace Mirror
             {
                 if (_mediaManager != null)
                 {
+                    _mediaManager.Failed -= OnCameraStreamFailed;
                     _mediaManager.Dispose();
                     _mediaManager = new MediaCapture();
                 }
@@ -182,32 +181,11 @@ namespace Mirror
                     VideoDeviceId = cameraId
                 });
 
-                // Ensure we're only ever wired to this multicast delegate once.
-                _mediaManager.Failed -= OnCameraStreamFailed;
                 _mediaManager.Failed += OnCameraStreamFailed;
-
-                // Cache the media properties as we'll need them later.
-                var deviceController = _mediaManager.VideoDeviceController;
-                _videoProperties = deviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
-
-                // Immediately start streaming to our CaptureElement UI.
-                // NOTE: CaptureElement's Source must be set before streaming is started.
                 _preview.Source = _mediaManager;
+
                 await _mediaManager.StartPreviewAsync();
-
-                if (_frameProcessingTimer != null)
-                {
-                    _frameProcessingTimer.Tick -= ProcessCurrentVideoFrame;
-                    _frameProcessingTimer.Stop();
-                    _frameProcessingTimer = null;
-                }
-
-                _frameProcessingTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(500)
-                };
-                _frameProcessingTimer.Tick += ProcessCurrentVideoFrame;
-                _frameProcessingTimer.Start();
+                await CaptureAndProcessEmotionAsync();
             }
             catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
             {
@@ -219,42 +197,34 @@ namespace Mirror
 
         async Task ShutdownWebcamAsync()
         {
-            _frameProcessingTimer?.Stop();
-
-            if (_mediaManager.CameraStreamState == CameraStreamState.Streaming)
+            try
             {
-                try
+                if (_mediaManager.CameraStreamState == CameraStreamState.Streaming)
                 {
                     await _mediaManager.StopPreviewAsync();
                 }
-                catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
-                {
-                    // Since we're going to destroy the MediaCapture object there's nothing to do here
-                }
             }
-
-            _frameProcessingTimer = null;
-            _preview.Source = null;
+            catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
+            {
+                // Since we're going to destroy the MediaCapture object there's nothing to do here
+            }
+            finally
+            {
+                _preview.Source = null;
+            }
         }
 
-        async void ProcessCurrentVideoFrame(object sender, object e)
+        async Task CaptureAndProcessEmotionAsync()
         {
-            // If a lock is being held it means we're still waiting for processing work on the previous frame to complete.
-            // In this situation, don't wait on the semaphore but exit immediately.
-            if (!_isStreaming || !_frameProcessingSemaphore.Wait(0))
-            {
-                return;
-            }
-
             try
             {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
                 {
-                    if (_isProcessing) return;
-
-                    var emotions = await CaptureEmotionAsync();
-                    if (emotions.IsNullOrEmpty() == false)
+                    do
                     {
+                        var emotions = await CaptureEmotionAsync();
+                        if (emotions.IsNullOrEmpty()) continue;
+
                         var mostProbable =
                             emotions.ToResults()
                                     .Where(result => result != Result.Empty)
@@ -262,13 +232,12 @@ namespace Mirror
 
                         if (mostProbable == null)
                         {
-                            _messageLabel.Text = string.Empty;
-                            _emoticon.Text = string.Empty;
+                            _messageLabel.Text =
+                                _emoticon.Text = string.Empty;
                         }
                         else
                         {
                             _emoticon.Text = Emoticons.From(mostProbable.Emotion);
-
                             var current = _messageLabel.Text;
                             var message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
                             while (current == message)
@@ -277,22 +246,18 @@ namespace Mirror
                             }
                             _messageLabel.Text = message;
                             await _speechEngine.SpeakAsync(message, _speaker);
-                            
-                            if (++ _captureCounter >= MaxCaptureBeforeReset)
-                            {
-                                await ChangeStreamStateAsync(false);
-                                await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
-                            }
                         }
                     }
+                    while (++_captureCounter < MaxCaptureBeforeReset);
+
+                    _captureCounter = 0; // Reset for next time...
+
+                    await ChangeStreamStateAsync(false);
+                    await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
                 });
             }
             catch (Exception ex) when (DebugHelper.IsHandled<MainPage>(ex))
             {
-            }
-            finally
-            {
-                _frameProcessingSemaphore.Release();
             }
         }
 
@@ -301,27 +266,18 @@ namespace Mirror
             switch (isStreaming)
             {
                 case false:
-
                     await ShutdownWebcamAsync();
-
-                    _visualizationCanvas.Children.Clear();
-                    _isStreaming = isStreaming;
                     break;
 
                 case true:
-
                     if (!await StartWebcamStreamingAsync())
                     {
                         await ChangeStreamStateAsync(false);
-                        break;
                     }
-
-                    _visualizationCanvas.Children.Clear();
-                    _isStreaming = isStreaming;
                     break;
             }
         }
-        
+
         async void OnCameraStreamFailed(MediaCapture sender, object args)
             => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 async () =>
@@ -339,6 +295,7 @@ namespace Mirror
         async void OnSpeakerVolumeChanged(object sender, RoutedEventArgs e)
             => await this.ThreadSafeAsync(() => _volume.Text = $"Volume: {_speaker.Volume:P0}");
 
-        async Task OnSongEnded(object sender, bool e) => await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
+        async Task OnSongEnded(object sender, bool e)
+            => await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
     }
 }

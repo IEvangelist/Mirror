@@ -43,11 +43,11 @@
                                               Converter={StaticResource StringFormatConverter}, 
                                               ConverterParameter='L {0:#}°'}" />
                 </StackPanel>
-                <TextBlock x:Name="_temperatureLabel" FontSize="80"  Padding="12,0" 
+                <TextBlock x:Name="_temperatureLabel" FontSize="80"  Padding="12,24,12,0" 
                            Text="{Binding Temp, 
                                           Converter={StaticResource StringFormatConverter}, 
                                           ConverterParameter=' {0:#}°'}" />
-                <Image x:Name="_weatherImageIcon"  Stretch="UniformToFill" Height="100" Width="120">
+                <Image x:Name="_weatherImageIcon"  Stretch="UniformToFill" Height="130" Width="156">
                     <Image.Source>
                         <BitmapImage UriSource="{Binding Icon, 
                                                          Converter={StaticResource StringFormatConverter},

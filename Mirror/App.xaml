@@ -5,9 +5,17 @@
     xmlns:local="using:Mirror"
     RequestedTheme="Dark">
     <Application.Resources>
-        <FontFamily x:Key="ContentControlThemeFontFamily">ms-appx:/Assets/PoiretOne-Regular.ttf#Poiret One</FontFamily>
-        <Style TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+
+                    <FontFamily x:Key="ContentControlThemeFontFamily">ms-appx:/Assets/PoiretOne-Regular.ttf#Poiret One</FontFamily>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+                    </Style>
+
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

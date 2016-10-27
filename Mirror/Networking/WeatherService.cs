@@ -41,7 +41,7 @@ namespace Mirror.Networking
             }
             catch (Exception ex) when (DebugHelper.IsHandled<WeatherService>(ex))
             {
-                return await TaskCache<T>.Result;
+                return await TaskCache<T>.Default;
             }
         }
     }

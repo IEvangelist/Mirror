@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
-using Windows.Media.Devices;
 using static Mirror.Extensions.StringExtensions;
 
 namespace Mirror.IO
