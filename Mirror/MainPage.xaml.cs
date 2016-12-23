@@ -38,9 +38,7 @@ namespace Mirror
     public sealed partial class MainPage : Page, IContextSynthesizer
     {
         #region Field(s)
-
-        int _captureCounter;
-        const int MaxCaptureBeforeReset = 2;
+        
         ILogger _logger = LoggerFactory.Get<MainPage>();
         MediaCapture _mediaManager = new MediaCapture();
         EmotionServiceClient _emotionClient = new EmotionServiceClient(Settings.Instance.AzureEmotionApiKey);
@@ -220,39 +218,22 @@ namespace Mirror
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
                 {
-                    do
-                    {
-                        var emotions = await CaptureEmotionAsync();
-                        if (emotions.IsNullOrEmpty()) continue;
+                    var emotions = await CaptureEmotionAsync();
+                    var mostProbable =
+                        emotions.ToResults()
+                                .Where(result => result != Result.Empty)
+                                .FirstOrDefault();
 
-                        var mostProbable =
-                            emotions.ToResults()
-                                    .Where(result => result != Result.Empty)
-                                    .FirstOrDefault();
+                    _emoticon.Text = Emoticons.From(mostProbable.Emotion);
+                    var current = _messageLabel.Text;
+                    var message = 
+                        EmotionMessages.Messages[mostProbable.Emotion]
+                                       .First(msg => msg != current);
 
-                        if (mostProbable == null)
-                        {
-                            _messageLabel.Text =
-                                _emoticon.Text = string.Empty;
-                        }
-                        else
-                        {
-                            _emoticon.Text = Emoticons.From(mostProbable.Emotion);
-                            var current = _messageLabel.Text;
-                            var message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
-                            while (current == message)
-                            {
-                                message = EmotionMessages.Messages[mostProbable.Emotion].RandomElement();
-                            }
-                            _messageLabel.Text = message;
-                            await _speechEngine.SpeakAsync(message, _speaker);
-                        }
-                    }
-                    while (++_captureCounter < MaxCaptureBeforeReset);
-
-                    _captureCounter = 0; // Reset for next time...
+                    _messageLabel.Text = message;                    
 
                     await ChangeStreamStateAsync(false);
+                    await _speechEngine.SpeakAsync(message, _speaker);
                     await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
                 });
             }
