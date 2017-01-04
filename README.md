@@ -14,3 +14,6 @@ To ensure your settings and API keys remain safe and secure, execute the followi
  ```
  git update-index --assume-unchanged "[file path]\Mirror\Configuration.resw"
  ```
+###Details
+
+I took the time to [blog](https://ievangelist.github.io/blog/building-a-magic-mirror/) about the entire process, enjoy!
