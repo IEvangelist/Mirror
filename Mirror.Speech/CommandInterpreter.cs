@@ -1,6 +1,6 @@
-﻿using Mirror.Extensions;
-using System;
+﻿using System;
 using System.Linq;
+using Mirror.Extensions;
 
 namespace Mirror.Speech
 {
@@ -29,8 +29,7 @@ namespace Mirror.Speech
             {
                 if (ContainsAny(phrase, "event", "calendar"))
                 {
-                    DateTime? dateContext;
-                    if (Contains(phrase, "on") && TryParseContext(phrase, out dateContext))
+                    if (Contains(phrase, "on") && TryParseContext(phrase, out var dateContext))
                     {
                         return new CommandContext(Command.CalendarEvents, dateContext);
                     }
@@ -42,8 +41,7 @@ namespace Mirror.Speech
                 }
                 else if (ContainsAny(phrase, "temp", "weather"))
                 {
-                    DateTime? dateContext;
-                    if (Contains(phrase, "on") && TryParseContext(phrase, out dateContext))
+                    if (Contains(phrase, "on") && TryParseContext(phrase, out var dateContext))
                     {
                         return new CommandContext(Command.ForecastWeather, dateContext);
                     }

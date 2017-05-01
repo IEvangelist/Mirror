@@ -1,14 +1,14 @@
-﻿using Mirror.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Mirror.Core;
 using Mirror.Extensions;
 using Mirror.Interfaces;
 using Mirror.IO;
 using Mirror.Models;
 using Mirror.Threading;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TagLib;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -51,8 +51,7 @@ namespace Mirror
 
         static double GetPercent(string phrase)
         {
-            int percent;
-            int.TryParse(Regex.Match(phrase, @"\d+").Value, out percent);
+            int.TryParse(Regex.Match(phrase, @"\d+").Value, out var percent);
 
             return percent / 100d;
         }

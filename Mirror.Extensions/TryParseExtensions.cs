@@ -11,11 +11,8 @@ namespace Mirror.Extensions
             where TEnum : struct, IConvertible, IComparable, IFormattable =>
                 TryParse<TEnum>(value, Enum.TryParse);
         
-        public static T TryParse<T>(this string value, ParseDelegate<T> parse) where T : struct
-        {
-            T result;
-            parse(value as string, out result);
-            return result;
-        }
+        public static T TryParse<T>(this string value, ParseDelegate<T> parse) 
+            where T : struct
+            => parse(value as string, out var result) ? result : default(T);
     }
 }

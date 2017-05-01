@@ -37,8 +37,7 @@ namespace Mirror.Extensions
 
         static double GetPercent(string phrase)
         {
-            int percent;
-            int.TryParse(Regex.Match(phrase, @"\d+").Value, out percent);
+            int.TryParse(Regex.Match(phrase, @"\d+").Value, out var percent);
 
             return percent / 100d;
         }

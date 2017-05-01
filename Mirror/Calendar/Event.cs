@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Text;
 using static Mirror.Calendar.Status;
 
 
 namespace Mirror.Calendar
 {
-   public class Event
+    public class Event
     {
         static Func<Content, DateTime?> ParseDate = content =>
             DateParser.Parse(content.Value, TimeZoneParser.Parse(content.Parameters));
@@ -49,15 +48,13 @@ namespace Mirror.Calendar
                         result.Location = content.Value;
                         break;
                     case "UID":
-                        Guid id;
-                        if (Guid.TryParse(content.Value, out id))
+                        if (Guid.TryParse(content.Value, out var id))
                         {
                             result.UniqueId = id;
                         }
                         break;
                     case "STATUS":
-                        Status status;
-                        if (Enum.TryParse(content.Value, true, out status))
+                        if (Enum.TryParse(content.Value, true, out Status status))
                         {
                             result.Status = status;
                         }
