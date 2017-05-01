@@ -1,5 +1,5 @@
-﻿using Mirror.Networking;
-using System;
+﻿using System;
+using Mirror.Networking;
 using Windows.UI.Xaml;
 
 namespace Mirror.ViewModels
@@ -28,6 +28,8 @@ namespace Mirror.ViewModels
                 OnPropertyChanged(this, nameof(IpAddress));
             }
         }
+
+        public string OSVersion { get; } = Core.OSVersion.Current.ToString();
 
         public HudViewModel(DependencyObject dependency) : base(dependency)
         {

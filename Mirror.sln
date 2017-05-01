@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror", "Mirror\Mirror.csproj", "{86BC2E0D-6283-4E90-A3F7-8417008DF105}"
 EndProject
@@ -29,6 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|Any CPU.Build.0 = Debug|x86
+		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|ARM.ActiveCfg = Debug|ARM
 		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|ARM.Build.0 = Debug|ARM
 		{86BC2E0D-6283-4E90-A3F7-8417008DF105}.Debug|ARM.Deploy.0 = Debug|ARM
