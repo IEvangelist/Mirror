@@ -1,12 +1,12 @@
-﻿using Mirror.Calendar;
-using Mirror.Core;
-using Mirror.Threading;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Mirror.Calendar;
+using Mirror.Core;
+using Mirror.Threading;
 using static Mirror.Calendar.Calendar;
 
 
@@ -25,7 +25,7 @@ namespace Mirror.Networking
 
             var getCalendarTasks =
                 settings
-                    .Calendars
+                   ?.Calendars
                    ?.Select(
                        cal =>
                        Do.WithRetry(() =>
@@ -38,7 +38,9 @@ namespace Mirror.Networking
                                                                       })
                                                : null as Func<HttpClient>)));
 
-            return await Task.WhenAll(getCalendarTasks);
+            return getCalendarTasks?.Any() ?? false 
+                ? await Task.WhenAll(getCalendarTasks)
+                : await TaskCache<Calendar.Calendar[]>.Value(() => new[] { Empty });
         }
 
         static async Task<Calendar.Calendar> GetCalendarAsync(string url, Func<HttpClient> getClient = null)

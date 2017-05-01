@@ -1,12 +1,12 @@
-﻿using Mirror.Controls;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Mirror.Controls;
 using Mirror.Core;
 using Mirror.Extensions;
 using Mirror.Networking;
 using Mirror.Speech;
 using Mirror.ViewModels;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -22,7 +22,7 @@ namespace Mirror
         ICalendarService _calendarService;
 
         string UnableToGenerateSpeechMessage { get; } =
-            "I'm sorry, but I'm having difficulity retrieving your calendar events right now. Please, try again later.";
+            "I'm sorry, but I'm having difficulty retrieving your calendar events right now. Please, try again later.";
 
         public EventCalendar()
         {
