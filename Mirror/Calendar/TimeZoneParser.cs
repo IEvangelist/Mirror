@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using TimeZoneConverter;
 
 namespace Mirror.Calendar
 {
-   public class TimeZoneParser
+    public class TimeZoneParser
     {
         const string TimeZoneId = "TZID";
 
@@ -18,10 +18,25 @@ namespace Mirror.Calendar
             if (parameters.ContainsKey(TimeZoneId) && parameters[TimeZoneId].Count == 1)
             {
                 var scrubbedValue = ScrubTimeZone(parameters[TimeZoneId][0]);
-                return TimeZoneInfo.FindSystemTimeZoneById(scrubbedValue);
+                return TryParse(scrubbedValue) ?? TryParse(scrubbedValue, true);
             }
 
             return null;
+        }
+
+        static TimeZoneInfo TryParse(string timezoneId, bool convertFromIana = false)
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(
+                    convertFromIana
+                        ? TZConvert.IanaToWindows(timezoneId)
+                        : timezoneId);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         static string ScrubTimeZone(string timezone)

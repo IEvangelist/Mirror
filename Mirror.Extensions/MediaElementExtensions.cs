@@ -22,12 +22,12 @@ namespace Mirror.Extensions
                 else if (phrase.ContainsIgnoringCase("up") ||
                          phrase.ContainsIgnoringCase("loud"))
                 {
-                    mediaElement.Volume = Math.Min(1, volume + .1);
+                    mediaElement.Volume = Math.Min(1, volume + .2);
                 }
                 else if (phrase.ContainsIgnoringCase("down") ||
                          phrase.ContainsIgnoringCase("quiet"))
                 {
-                    mediaElement.Volume = Math.Max(0, volume - .1);
+                    mediaElement.Volume = Math.Max(0, volume - .2);
                 }
                 else if (phrase.ContainsIgnoringCase("percent"))
                 {

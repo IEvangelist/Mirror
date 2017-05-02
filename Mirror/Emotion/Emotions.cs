@@ -1,7 +1,8 @@
-﻿using Microsoft.ProjectOxford.Emotion.Contract;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Microsoft.ProjectOxford.Common.Contract;
+using Microsoft.ProjectOxford.Emotion.Contract;
 using RawEmotion = Microsoft.ProjectOxford.Emotion.Contract.Emotion;
 
 namespace Mirror.Emotion
@@ -92,7 +93,7 @@ namespace Mirror.Emotion
             }
         }
 
-        public static Result ToMostProbable(this Scores scores)
+        public static Result ToMostProbable(this EmotionScores scores)
         {
             Contract.Assert(scores != null);
 
