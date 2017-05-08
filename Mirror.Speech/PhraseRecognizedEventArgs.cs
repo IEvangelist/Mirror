@@ -36,8 +36,8 @@ namespace Mirror.Speech
             CommandContext = commandContext;
             IsDictation = 
                 speechRecognitionArgs.Result.Constraint == null 
-                ? false 
-                : CommandContext.Command == Command.Dictation;
+                    ? false 
+                    : CommandContext.Command == Command.Dictation;
         }
     }
 }

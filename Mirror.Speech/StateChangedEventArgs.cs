@@ -1,6 +1,6 @@
-﻿using Mirror.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Mirror.Extensions;
 using Windows.Media.SpeechRecognition;
 
 namespace Mirror.Speech
@@ -185,10 +185,7 @@ namespace Mirror.Speech
             return FromResult(result.SplitCamelCase());
         }
 
-        static string FromResult(string result)
-        {
-            string value;
-            return ResultMap.TryGetValue(result, out value) ? value : result;
-        }
+        static string FromResult(string result) 
+            => ResultMap.TryGetValue(result, out var value) ? value : result;
     }
 }

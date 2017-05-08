@@ -1,12 +1,12 @@
-﻿using MetroLog;
-using Mirror.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using MetroLog;
+using Mirror.Logging;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Media.Capture;
 using Windows.Media.SpeechRecognition;
@@ -19,8 +19,6 @@ namespace Mirror.Speech
     public class SpeechEngine : ISpeechEngine
     {
         #region Properties, Events and Fields
-
-        ISpeechEngine _ => this;
 
         const uint RecognizerNotFoundHResult = 0x8004503a;
 
@@ -42,20 +40,28 @@ namespace Mirror.Speech
 
         public SpeechRecognitionMode RecognitionMode { get; private set; }
 
-        SpeechRecognizer SpeechRecognizer => _speechRecognizer ?? InitializeRecognizer();
+        SpeechRecognizer SpeechRecognizer
+            => _speechRecognizer ?? InitializeRecognizer();
 
-        ResourceMap SpeechResourceMap => _speechResourceMap ?? (_speechResourceMap = ResourceManager.Current
-                                                                                                    .MainResourceMap
-                                                                                                    .GetSubtree("SpeechResources"));
+        ResourceMap SpeechResources
+            => _speechResourceMap ?? (_speechResourceMap = ResourceManager.Current
+                                                                          .MainResourceMap
+                                                                          .GetSubtree(nameof(SpeechResources)));
 
         List<string> AvailablePhrases { get; set; }
 
         SemaphoreSlim Mutex => _mutex ?? (_mutex = new SemaphoreSlim(1));
 
-        SpeechSynthesizer SpeechSynthesizer => _speechSynthesizer ?? (_speechSynthesizer = new SpeechSynthesizer
-        {
-            Voice = SpeechSynthesizer.AllVoices.FirstOrDefault(voice => voice.Gender == VoiceGender.Female) ?? SpeechSynthesizer.DefaultVoice
-        });
+        SpeechSynthesizer SpeechSynthesizer
+            => _speechSynthesizer ??
+            (_speechSynthesizer = new SpeechSynthesizer
+            {
+                Voice =
+                    SpeechSynthesizer.AllVoices
+                                     .FirstOrDefault(voice =>
+                                                     voice.Gender == VoiceGender.Female) 
+                    ?? SpeechSynthesizer.DefaultVoice
+            });
 
         SemaphoreSlim Semaphore => _semaphore ?? (_semaphore = new SemaphoreSlim(0, 1));
 
@@ -93,8 +99,7 @@ namespace Mirror.Speech
             try
             {
                 _speechContext = ResourceContext.GetForCurrentView();
-
-                _speechRecognizer = new SpeechRecognizer();                
+                _speechRecognizer = new SpeechRecognizer();
                 _speechRecognizer.StateChanged += OnSpeechRecognizerStateChanged;
             }
             catch (Exception ex)
@@ -112,29 +117,29 @@ namespace Mirror.Speech
             return _speechRecognizer;
         }
 
-        async Task ISpeechEngine.SetRecognitionModeAsync(SpeechRecognitionMode mode)
+        public async Task SetRecognitionModeAsync(SpeechRecognitionMode mode)
         {
             if (mode != RecognitionMode)
             {
                 RecognitionMode = mode;
 
-                await 
+                await
                 (
                     mode == SpeechRecognitionMode.Paused
-                        ? _.EndRecognitionSessionAsync()
-                        : _.StartContinuousRecognitionAsync()
+                        ? EndRecognitionSessionAsync()
+                        : StartContinuousRecognitionAsync()
                 );
             }
         }
 
-        async Task ISpeechEngine.StartContinuousRecognitionAsync()
+        public async Task StartContinuousRecognitionAsync()
         {
             // Compiling a new grammar is potentially a high-latency operation,
             // and it's easy for various threads to call this method concurrently,
             // so use a sempahore to serialize access to this method. The semaphore
             // allows only one thread at a time to execute this code path.
             await Mutex.WaitAsync();
-            await _.EndRecognitionSessionAsync();
+            await EndRecognitionSessionAsync();
 
             try
             {
@@ -142,9 +147,9 @@ namespace Mirror.Speech
                 {
                     return;
                 }
-                
+
                 await CompileGrammarAsync();
-                
+
                 SpeechRecognizer.ContinuousRecognitionSession.Completed += OnContinuousRecognitionSessionCompleted;
                 SpeechRecognizer.ContinuousRecognitionSession.ResultGenerated += OnContinuousRecognitionSessionResultGenerated;
 
@@ -162,7 +167,7 @@ namespace Mirror.Speech
             }
         }
 
-        async Task ISpeechEngine.SpeakAsync(string phrase, MediaElement media)
+        public async Task SpeakAsync(string phrase, MediaElement media)
         {
             if (!string.IsNullOrEmpty(phrase))
             {
@@ -171,7 +176,7 @@ namespace Mirror.Speech
                 // Turn off speech recognition while speech synthesis is happening.
                 if (isPauseRquired)
                 {
-                    await _.SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
+                    await SetRecognitionModeAsync(SpeechRecognitionMode.Paused);
                 }
 
                 MediaPlayerElement = media;
@@ -191,14 +196,16 @@ namespace Mirror.Speech
                 // Turn on speech recognition and listen for commands.
                 if (isPauseRquired)
                 {
-                    await _.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
+                    await SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
                 }
             }
         }
 
-        protected virtual void OnPhraseRecognized(PhraseRecognizedEventArgs e) => PhraseRecognized?.Invoke(this, e);
+        protected virtual void OnPhraseRecognized(PhraseRecognizedEventArgs e)
+            => PhraseRecognized?.Invoke(this, e);
 
-        protected virtual void OnStateChanged(StateChangedEventArgs e) => StateChanged?.Invoke(this, e);
+        protected virtual void OnStateChanged(StateChangedEventArgs e)
+            => StateChanged?.Invoke(this, e);
 
         async Task<bool> IsMicrophoneAvailableAsync()
         {
@@ -220,7 +227,7 @@ namespace Mirror.Speech
                     {
                         Debug.WriteLine("SpeechManager: No AudioDeviceController found");
                     }
-                }                    
+                }
             }
             catch (COMException ex)
             {
@@ -236,11 +243,13 @@ namespace Mirror.Speech
 
         void PopulatePhrases()
         {
-            AvailablePhrases = new List<string>();
-            
-            // General
-            AvailablePhrases.Add(FromResource(Phrases.Help));
-            AvailablePhrases.Add(FromResource(Phrases.WhatCanISay));
+            AvailablePhrases = new List<string>
+            {
+
+                // General
+                FromResource(Phrases.Help),
+                FromResource(Phrases.WhatCanISay)
+            };
 
             // Volume
             var volumeFormat = FromResource(Phrases.VolumeAtPercent);
@@ -303,8 +312,8 @@ namespace Mirror.Speech
             AvailablePhrases.Add(FromResource(Phrases.PlayAnySong));
         }
 
-        string FromResource(string resourceKey) 
-            => SpeechResourceMap.GetValue(resourceKey, _speechContext).ValueAsString;
+        string FromResource(string resourceKey)
+            => SpeechResources.GetValue(resourceKey, _speechContext).ValueAsString;
 
         async Task CompileGrammarAsync()
         {
@@ -351,7 +360,7 @@ namespace Mirror.Speech
 
             // Apply the dictation topic constraint to optimize for dictated freeform speech.
             SpeechRecognizer.Constraints
-                            .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation, 
+                            .Add(new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.Dictation,
                                                                       "dictation"));
 
             var result = await SpeechRecognizer.CompileConstraintsAsync();
@@ -378,7 +387,7 @@ namespace Mirror.Speech
             SpeechContinuousRecognitionSession sender,
             SpeechContinuousRecognitionCompletedEventArgs args)
         {
-            _isInRecognitionSession = false;            
+            _isInRecognitionSession = false;
             OnStateChanged(new StateChangedEventArgs(args));
         }
 
@@ -438,11 +447,11 @@ namespace Mirror.Speech
         /// <summary>
         /// Provides feedback to client code based on whether the recognizer is receiving speech input.
         /// </summary>
-        void OnSpeechRecognizerStateChanged(SpeechRecognizer sender, 
+        void OnSpeechRecognizerStateChanged(SpeechRecognizer sender,
                                             SpeechRecognizerStateChangedEventArgs args)
             => OnStateChanged(new StateChangedEventArgs(args));
 
-        async Task ISpeechEngine.EndRecognitionSessionAsync()
+        public async Task EndRecognitionSessionAsync()
         {
             // Detach event handlers.
             if (SpeechRecognizer != null && SpeechRecognizer.ContinuousRecognitionSession != null)
