@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Mirror.ViewModels;
 using Mirror.Extensions;
+using Mirror.ViewModels;
 using Windows.UI.Xaml;
 
 namespace Mirror.Controls
@@ -13,14 +13,9 @@ namespace Mirror.Controls
             object dataContext, 
             DateTime? dateContext = null,
             string unableToGenerateSpeechMessage = "Sorry, I'm unable to process your request.")
-            => dependency.ThreadSafeAsync(() => 
-            {
-                var viewModel = dataContext as BaseViewModel;
-                if (viewModel != null)
-                {
-                    return viewModel.ToFormattedString(dateContext);
-                }
-                return unableToGenerateSpeechMessage;
-            });
+            => dependency.ThreadSafeAsync(
+                () => dataContext is BaseViewModel viewModel 
+                    ? viewModel.ToFormattedString(dateContext) 
+                    : unableToGenerateSpeechMessage);
     }
 }
