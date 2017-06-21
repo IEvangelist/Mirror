@@ -1,5 +1,5 @@
-﻿using Mirror.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Mirror.Extensions;
 
 
 namespace Mirror.Emotion
@@ -16,7 +16,7 @@ namespace Mirror.Emotion
                 [Emotions.Happiness] = new[] { "A", "j", "m" },
                 [Emotions.Neutral] = new[] { "C", "J", "l", "Z" },
                 [Emotions.Sadness] = new[] { "k", "d", "I" },
-                [Emotions.Surprise] = new[] { "v", "w", "h" },
+                [Emotions.Surprise] = new[] { "v", "w", "h" }
             };
 
         /// <summary>

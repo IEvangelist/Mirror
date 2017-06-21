@@ -1,13 +1,13 @@
-﻿using Mirror.Core;
+﻿using System;
+using System.Threading.Tasks;
+using Mirror.Controls;
+using Mirror.Core;
+using Mirror.Networking;
+using Mirror.Speech;
+using Mirror.ViewModels;
+using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Mirror.Networking;
-using System;
-using System.Threading.Tasks;
-using Mirror.ViewModels;
-using Mirror.Speech;
-using Windows.ApplicationModel;
-using Mirror.Controls;
 
 namespace Mirror
 {
@@ -17,7 +17,7 @@ namespace Mirror
         IWeatherService _weatherService;
 
         string UnableToGenerateSpeechMessage { get; } =
-            "I'm sorry, but I'm having difficulity retrieving the forecast right now. Please, try again later.";
+            "I'm sorry, but I'm having difficulty retrieving the forecast right now. Please, try again later.";
 
         public ForecastWeather()
         {
@@ -47,12 +47,19 @@ namespace Mirror
 
         async Task LoadForecastAsync()
         {
-            _forecastStackPanel.Opacity = 0;
+            try
+            {
+                _forecastStackPanel.Opacity = 0;
 
-            var forecast = await _weatherService.GetForecastAsync();
-            DataContext = new ForecastViewModel(this, forecast);
+                var forecast = await _weatherService.GetForecastAsync();
+                DataContext = new ForecastViewModel(this, forecast);
 
-            _fadeIn.Begin();
+                _fadeIn.Begin();
+            }
+            catch (Exception ex) when (DebugHelper.IsHandled<ForecastWeather>(ex))
+            {
+                // If we're unable to load, this is probably a configuration issue.
+            }
         }
 
         Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)

@@ -1,5 +1,10 @@
 ﻿#region Using Statement(s)
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using MetroLog;
 using Microsoft.ProjectOxford.Emotion;
 using Mirror.Controls;
@@ -13,11 +18,6 @@ using Mirror.Models;
 using Mirror.Speech;
 using Mirror.Threading;
 using Mirror.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.Devices;
@@ -56,7 +56,7 @@ namespace Mirror
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _messageLabel.Text = "Hello, David";
+            _messageLabel.Text = GetTimeOfDayGreeting();
 
             // I want these to be serialized.
             foreach (var loader in new IAsyncLoader[]
@@ -71,9 +71,19 @@ namespace Mirror
 
             _speechEngine.PhraseRecognized += OnSpeechEnginePhraseRecognized;
             _speechEngine.StateChanged += OnSpeechEngineStateChanged;
-            _speaker.Volume = .2;
+            _speaker.Volume = .5;
 
             await _speechEngine.StartContinuousRecognitionAsync();
+        }
+
+        private static string GetTimeOfDayGreeting()
+        {
+            var hour = DateTime.Now.Hour;
+            return hour < 12
+                ? "Good morning"
+                : hour < 17
+                    ? "Good afternoon"
+                    : "Good evening";
         }
 
         async void OnSpeechEngineStateChanged(object sender, StateChangedEventArgs e)
@@ -128,7 +138,7 @@ namespace Mirror
 
         async Task<IEnumerable<RawEmotion>> CaptureEmotionAsync()
         {
-            RawEmotion[] result;
+            RawEmotion[] result = null;
 
             try
             {
@@ -224,16 +234,24 @@ namespace Mirror
                                 .Where(result => result != Result.Empty)
                                 .FirstOrDefault();
 
-                    _emoticon.Text = Emoticons.From(mostProbable.Emotion);
-                    var current = _messageLabel.Text;
-                    var message = 
-                        EmotionMessages.Messages[mostProbable.Emotion]
-                                       .First(msg => msg != current);
+                    if (mostProbable != null)
+                    {
+                        _emoticon.Text = Emoticons.From(mostProbable.Emotion);
+                        var current = _messageLabel.Text;
+                        var message =
+                            EmotionMessages.Messages[mostProbable.Emotion]
+                                           .First(msg => msg != current);
 
-                    _messageLabel.Text = message;                    
+                        _messageLabel.Text = message;
 
-                    await ChangeStreamStateAsync(false);
-                    await _speechEngine.SpeakAsync(message, _speaker);
+                        await ChangeStreamStateAsync(false);
+                        await _speechEngine.SpeakAsync(message, _speaker);
+                    }
+                    else
+                    {
+                        await ChangeStreamStateAsync(false);
+                    }
+                    
                     await _speechEngine.SetRecognitionModeAsync(SpeechRecognitionMode.CommandPhrases);
                 });
             }
@@ -268,7 +286,7 @@ namespace Mirror
             => await this.ThreadSafeAsync(() => _songDetails.Text = song.ToString());
 
         Task<string> IContextSynthesizer.GetContextualMessageAsync(DateTime? dateContext)
-            => Task.FromResult("You can say things like, \"what's the weather\", \"read the forecast\", or \"what is the temparature\". " +
+            => Task.FromResult("You can say things like, \"what's the weather\", \"read the forecast\", or \"what is the temperature\". " +
                                "Or you could ask \"what's my calendar look like\" or \"what are my upcoming events\". " +
                                "For music, you can say \"play a song\", \"turn this up\", and other common commands like, \"mute\", etc. " +
                                "Finally, you can ask \"how do I look\"!");

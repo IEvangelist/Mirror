@@ -1,9 +1,9 @@
-﻿using Mirror.Core;
-using Mirror.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mirror.Core;
+using Mirror.Extensions;
 using Windows.UI.Xaml;
 
 namespace Mirror.ViewModels
@@ -17,7 +17,7 @@ namespace Mirror.ViewModels
         public ForecastViewModel(DependencyObject dependency, Models.Forecast forecast) : base(dependency)
         {
             _forecast = forecast;
-            if (_forecast?.Cnt > 0)
+            if (_forecast.Cnt > 0)
             {
                 var now = DateTime.Now;
                 Days = 
@@ -31,7 +31,6 @@ namespace Mirror.ViewModels
         public override string ToFormattedString(DateTime? dateContext)
         {
             var builder = new StringBuilder();
-
             foreach (var day in Days.Where(forecastDay => 
                                            dateContext.HasValue 
                                                ? forecastDay.DateTime.Date == dateContext.Value.Date
@@ -39,6 +38,7 @@ namespace Mirror.ViewModels
             {
                 builder.AppendLine(day.ToFormattedString(dateContext));
             }
+
             return builder.ToString();
         }
     }
@@ -68,9 +68,7 @@ namespace Mirror.ViewModels
             _weather = weather;
         }
 
-        public override string ToFormattedString(DateTime? dateContext)
-        {
-            return $"On {_listing.DateTime:dddd}, the {_listing.DateTime.Day.ToOrdinalString()} expect {Conditions} with a low of {_listing.Temp.Min:#}° and a high of {_listing.Temp.Max:#}°.";
-        }
+        public override string ToFormattedString(DateTime? dateContext) 
+            => $"On {_listing.DateTime:dddd}, the {_listing.DateTime.Day.ToOrdinalString()} expect {Conditions} with a low of {_listing.Temp.Min:#}° and a high of {_listing.Temp.Max:#}°.";
     }
 }

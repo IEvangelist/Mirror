@@ -3,7 +3,7 @@ using TagLib;
 
 namespace Mirror.Models
 {
-    public class Song
+    public struct Song
     {
         public string Artist { get; private set; }
 

@@ -58,31 +58,38 @@ namespace Mirror
 
         async Task LoadCalendarEventsAsync()
         {
-            var calendars = await _calendarService.GetCalendarsAsync();
-            if (!calendars.IsNullOrEmpty() && calendars.All(calendar => calendar != Empty))
+            try
             {
-                var view = ApplicationView.GetForCurrentView();
-                var take = view.Orientation == ApplicationViewOrientation.Portrait ? 7 : 5;
-
-                var events =
-                    calendars.SelectMany(calendar => calendar?.Events)
-                             .Where(e =>
-                                    e.StartDateTime > DateTime.Now &&
-                                    !string.IsNullOrWhiteSpace(e.Summary) &&
-                                    e.Summary.IndexOf("cancel", StringComparison.OrdinalIgnoreCase) == -1)
-                             .OrderBy(e => e.StartDateTime)
-                             .Take(take)
-                             .ToArray();
-
-                if (!events.IsNullOrEmpty())
+                var calendars = await _calendarService.GetCalendarsAsync();
+                if (!calendars.IsNullOrEmpty() && calendars.All(calendar => calendar != Empty))
                 {
-                    DataContext = new CalendarViewModel(this, events);
-                    _fadeIn.Begin();
+                    var view = ApplicationView.GetForCurrentView();
+                    var take = view.Orientation == ApplicationViewOrientation.Portrait ? 7 : 5;
+
+                    var events =
+                        calendars.SelectMany(calendar => calendar?.Events)
+                                 .Where(e =>
+                                        e.StartDateTime > DateTime.Now &&
+                                        !string.IsNullOrWhiteSpace(e.Summary) &&
+                                        e.Summary.IndexOf("cancel", StringComparison.OrdinalIgnoreCase) == -1)
+                                 .OrderBy(e => e.StartDateTime)
+                                 .Take(take)
+                                 .ToArray();
+
+                    if (!events.IsNullOrEmpty())
+                    {
+                        DataContext = new CalendarViewModel(this, events);
+                        _fadeIn.Begin();
+                    }
+                    else
+                    {
+                        Visibility = Visibility.Collapsed;
+                    }
                 }
-                else
-                {
-                    Visibility = Visibility.Collapsed;
-                }
+            }
+            catch (Exception ex) when (DebugHelper.IsHandled<EventCalendar>(ex))
+            {
+                // If we're unable to load, this is probably a configuration issue.
             }
         }
     }

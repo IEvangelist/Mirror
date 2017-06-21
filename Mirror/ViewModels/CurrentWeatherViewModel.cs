@@ -1,7 +1,7 @@
-﻿using Mirror.Core;
-using Mirror.Extensions;
-using System;
+﻿using System;
 using System.Linq;
+using Mirror.Core;
+using Mirror.Extensions;
 using Windows.UI.Xaml;
 
 namespace Mirror.ViewModels
@@ -25,7 +25,7 @@ namespace Mirror.ViewModels
 
         public string SunRiseOrSet { get; private set; }
 
-        public string Conditions => _weather?.Description.ToTitleCase();
+        public string Conditions => _weather.Description.ToTitleCase();
 
         public string Location => _currentWeather.Name;
 
@@ -34,10 +34,10 @@ namespace Mirror.ViewModels
         public CurrentWeatherViewModel(DependencyObject dependency, Models.Current currentWeather) : base(dependency)
         {
             _currentWeather = currentWeather;
-            _weather = _currentWeather?.Weather?.FirstOrDefault();
+            _weather = _currentWeather.Weather.FirstOrDefault();
 
-            DateTime? sunrise = _currentWeather?.Sys?.SunriseDateTime,
-                      sunset = _currentWeather?.Sys?.SunsetDateTime;
+            DateTime? sunrise = _currentWeather.Sys.SunriseDateTime,
+                      sunset = _currentWeather.Sys.SunsetDateTime;
 
             _isSunrise = DateTime.Now > sunset;
             SunRiseOrSet =

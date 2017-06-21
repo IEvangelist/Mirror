@@ -1,12 +1,12 @@
-﻿using Mirror.Extensions;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Mirror.Extensions;
+using Newtonsoft.Json;
 
 
 namespace Mirror.Models
 {
-    public class Coord
+    public struct Coord
     {
         [JsonProperty("lon")]
         public double Lon { get; set; }
@@ -15,7 +15,7 @@ namespace Mirror.Models
         public double Lat { get; set; }
     }
 
-    public class Weather
+    public struct Weather
     {
         [JsonProperty("id")]
         public int Id { get; set; }
@@ -30,7 +30,7 @@ namespace Mirror.Models
         public string Icon { get; set; }
     }
 
-    public class Main
+    public struct Main
     {
         [JsonProperty("temp")]
         public double Temp { get; set; }
@@ -57,7 +57,7 @@ namespace Mirror.Models
         public double TempKf { get; set; }
     }
 
-    public class Wind
+    public struct Wind
     {
         [JsonProperty("speed")]
         public double Speed { get; set; }
@@ -69,19 +69,13 @@ namespace Mirror.Models
         public double Gust { get; set; }
     }
 
-    //    public class Rain
-    //    {
-    //        [JsonProperty("1h")]
-    //        public double 1h { get; set; }
-    //}
-
-    public class Clouds
+    public struct Clouds
     {
         [JsonProperty("all")]
         public int All { get; set; }
     }
 
-    public partial class Sys
+    public struct Sys
     {
         [JsonProperty("type")]
         public int Type { get; set; }
@@ -104,9 +98,12 @@ namespace Mirror.Models
         public double Sunset { get; set; }
 
         public DateTime SunsetDateTime => Sunset.FromUnixTimeStamp();
+
+        [JsonProperty("population")]
+        public int Population { get; set; }
     }
 
-    public class Current
+    public struct Current
     {
         [JsonProperty("coord")]
         public Coord Coord { get; set; }

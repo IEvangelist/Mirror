@@ -1,10 +1,10 @@
-﻿using Mirror.Controls;
+﻿using System;
+using System.Threading.Tasks;
+using Mirror.Controls;
 using Mirror.Core;
 using Mirror.Networking;
 using Mirror.Speech;
 using Mirror.ViewModels;
-using System;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -60,14 +60,21 @@ namespace Mirror
 
         async Task LoadWeatherAsync()
         {
-            SetInitialState();
-
-            var currentWeather = await _weatherService.GetCurrentAsync();
-            if (currentWeather != null)
+            try
             {
-                DataContext = new CurrentWeatherViewModel(this, currentWeather);
-                ToggleContentVisibility(true);
-                _fadeIn.Begin();
+                SetInitialState();
+
+                var currentWeather = await _weatherService.GetCurrentAsync();
+                if (!currentWeather.Equals(default(Models.Current)))
+                {
+                    DataContext = new CurrentWeatherViewModel(this, currentWeather);
+                    ToggleContentVisibility(true);
+                    _fadeIn.Begin();
+                }
+            }
+            catch (Exception ex) when (DebugHelper.IsHandled<CurrentWeather>(ex))
+            {
+                // If we're unable to load, this is probably a configuration issue.
             }
         }
 

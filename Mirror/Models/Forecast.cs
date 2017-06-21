@@ -1,18 +1,12 @@
-﻿using Mirror.Extensions;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Mirror.Extensions;
+using Newtonsoft.Json;
 
 
 namespace Mirror.Models
 {
-    public partial class Sys
-    {
-        [JsonProperty("population")]
-        public int Population { get; set; }
-    }
-
-    public class City
+    public struct City
     {
         [JsonProperty("id")]
         public int Id { get; set; }
@@ -33,7 +27,7 @@ namespace Mirror.Models
         public Sys Sys { get; set; }
     }
 
-    public class List
+    public struct List
     {
         [JsonProperty("dt")]
         public double Dt { get; set; }
@@ -56,7 +50,7 @@ namespace Mirror.Models
         public Sys Sys { get; set; }
     }
 
-    public class Temp
+    public struct Temp
     {
         [JsonProperty("day")]
         public double Day { get; set; }
@@ -77,7 +71,7 @@ namespace Mirror.Models
         public double Morn { get; set; }
     }
 
-    public class Forecast
+    public struct Forecast
     {
         [JsonProperty("city")]
         public City City { get; set; }
